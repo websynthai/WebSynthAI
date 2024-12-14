@@ -23,6 +23,17 @@ import { isModelSupported } from "@/lib/supportedllm";
 import { useClientMode } from "@/hooks/useMode";
 import { deleteUI } from "@/actions/ui/delete-ui";
 
+type SubPrompt = {
+  id: string;
+  UIId: string;
+  SUBId: string;
+  createdAt: Date;
+  subPrompt: string;
+  codeId: string;
+  modelId?: string | null;
+  code?: string;
+};
+
 const UI = (props: { params: Promise<any> }) => {
   const params = use(props.params);
   const ref = useRef<ImperativePanelGroupHandle>(null);
@@ -161,63 +172,24 @@ const UI = (props: { params: Promise<any> }) => {
         }));
         preciseCode = await getCode(subPrompt[0].codeId, i, 0);
       }
-      if (subid.endsWith("0")) {
-        var balancedCode = subPrompt[1].code;
-        var creativeCode = subPrompt[2].code;
-        if (balancedCode == "" && modesFound["balanced"]) {
-          setUiState((preUIState) => ({
-            ...preUIState,
-            balanced: {
-              ...preUIState.balanced,
-              loading: true,
-            },
-          }));
-          balancedCode = await getCode(subPrompt[1].codeId, i, 1);
-        }
-        if (creativeCode == "" && modesFound["creative"]) {
-          setUiState((preUIState) => ({
-            ...preUIState,
-            creative: {
-              ...preUIState.creative,
-              loading: true,
-            },
-          }));
-          creativeCode = await getCode(subPrompt[2].codeId, i, 2);
-        }
-        setUiState({
-          precise: {
-            loading: false,
-            code: preciseCode!,
-          },
-          balanced: {
-            loading: false,
-            code: balancedCode!,
-          },
-          creative: {
-            loading: false,
-            code: creativeCode!,
-          },
-        });
-      } else {
-        setUiState({
-          precise: {
-            loading: false,
-            code: preciseCode!,
-          },
-          balanced: {
-            loading: false,
-            code: "",
-          },
-          creative: {
-            loading: false,
-            code: "",
-          },
-        });
-      }
+      setUiState({
+        precise: {
+          loading: false,
+          code: preciseCode!,
+        },
+        balanced: {
+          loading: false,
+          code: subPrompt[1]?.code || "",
+        },
+        creative: {
+          loading: false,
+          code: subPrompt[2]?.code || "",
+        },
+      });
       setMode("precise");
       setCode(preciseCode!);
     } catch (error) {
-      console.error("Error setting version:", error);
+      console.error("Error in setVersion:", error);
       toast.error("Failed to set version. Please try again.");
     }
   };
@@ -225,6 +197,7 @@ const UI = (props: { params: Promise<any> }) => {
   useEffect(() => {
     const fetchUI = async () => {
       try {
+        setBackendCheck(0);
         const fetchedUI = await getUI(uiid);
 
         if (!fetchedUI) {
@@ -236,7 +209,7 @@ const UI = (props: { params: Promise<any> }) => {
 
         const subPrompts = fetchedUI.subPrompts || [];
 
-        if (!subPrompts.find((sp) => sp.SUBId === "a-0")) {
+        if (!subPrompts.find((sp) => sp.SUBId.startsWith("a-0"))) {
           const filterfetchedUI = {
             ...fetchedUI,
             subPrompts: [],
@@ -253,10 +226,10 @@ const UI = (props: { params: Promise<any> }) => {
           return;
         }
 
-        const subPromptMap = {
-          "a-0": subPrompts.find((sp) => sp.SUBId === "a-0") || {},
-          "b-0": subPrompts.find((sp) => sp.SUBId === "b-0") || {},
-          "c-0": subPrompts.find((sp) => sp.SUBId === "c-0") || {},
+        const subPromptMap: { [key: string]: SubPrompt } = {
+          "a-0": subPrompts.find((sp) => sp.SUBId.startsWith("a-0")) || {} as SubPrompt,
+          "b-0": subPrompts.find((sp) => sp.SUBId.startsWith("b-0")) || {} as SubPrompt,
+          "c-0": subPrompts.find((sp) => sp.SUBId.startsWith("c-0")) || {} as SubPrompt,
         };
 
         setModesFound((prevmodesFound) => {
@@ -277,14 +250,17 @@ const UI = (props: { params: Promise<any> }) => {
           [
             {
               ...subPromptMap["a-0"],
+              id: `${subPromptMap["a-0"]?.id || 'empty'}-precise`,
               code: "",
             },
             {
               ...subPromptMap["b-0"],
+              id: `${subPromptMap["b-0"].id || 'empty'}-balanced`,
               code: "",
             },
             {
               ...subPromptMap["c-0"],
+              id: `${subPromptMap["c-0"].id || 'empty'}-creative`,
               code: "",
             },
           ] as {
@@ -300,7 +276,9 @@ const UI = (props: { params: Promise<any> }) => {
         ];
 
         const remainingSubPrompts = subPrompts.filter(
-          (subPromptObj) => !["a-0", "b-0", "c-0"].includes(subPromptObj.SUBId)
+          (subPromptObj) => !["a-0", "b-0", "c-0"].some(prefix => 
+            subPromptObj.SUBId.startsWith(prefix)
+          )
         );
 
         const sortedRemainingSubPrompts = remainingSubPrompts.sort(
@@ -350,7 +328,7 @@ const UI = (props: { params: Promise<any> }) => {
     };
 
     fetchUI();
-  }, []);
+  }, [uiid, router]);
 
   useEffect(() => {
     const incView = async () => {

@@ -10,17 +10,22 @@ interface SubPrompts {
 type SubPromptsArray = SubPrompts[][] | undefined;
 
 export const isParent = (subId: string, subPrompts?: SubPromptsArray): boolean => {
-    if (!subPrompts) return false;
+    if (!subPrompts || !subId) return false;
 
-    const flatSubPrompts = subPrompts.flat();
+    const flatSubPrompts = subPrompts.flat().filter(subPrompt => subPrompt && subPrompt.SUBId);
 
     return flatSubPrompts.some(subPrompt => {
-        const subPromptParts = subPrompt.SUBId.split('-');
-        const subIdParts = subId.split('-');
+        try {
+            const subPromptParts = subPrompt.SUBId.split('-');
+            const subIdParts = subId.split('-');
 
-        return (
-            subPromptParts.length > subIdParts.length &&
-            subPromptParts.slice(0, subIdParts.length).join('-') === subId
-        );
+            return (
+                subPromptParts.length > subIdParts.length &&
+                subPromptParts.slice(0, subIdParts.length).join('-') === subId
+            );
+        } catch (error) {
+            console.error('Error processing subPrompt:', error);
+            return false;
+        }
     });
 };
