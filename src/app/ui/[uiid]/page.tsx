@@ -8,7 +8,7 @@ import UIRigthHeader from "@/components/ui-right-header"
 import { useUIState } from "@/hooks/useUIState"
 import html2canvas from 'html2canvas';
 import { LoaderCircle, SendHorizontal } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, use } from "react";
 import { ImperativePanelGroupHandle } from "react-resizable-panels"
 import { updateUI } from "@/actions/ui/update-ui"
 import { getUI } from "@/actions/ui/get-uis"
@@ -23,34 +23,35 @@ import { isModelSupported } from "@/lib/supportedllm"
 import { useClientMode } from "@/hooks/useMode"
 import { deleteUI } from "@/actions/ui/delete-ui"
 
-const UI = ({ params }: { params: any }) => {
-	const ref = useRef<ImperativePanelGroupHandle>(null);
-	const captureRef = useRef<HTMLDivElement>(null);
-	const { data: session, status } = useSession()
-	const userId = session?.user?.id
+const UI = (props: { params: Promise<any> }) => {
+    const params = use(props.params);
+    const ref = useRef<ImperativePanelGroupHandle>(null);
+    const captureRef = useRef<HTMLDivElement>(null);
+    const { data: session, status } = useSession()
+    const userId = session?.user?.id
 
-	const router = useRouter()
-	const {modifierModel, descriptiveModel, initialModel, imageModel} = useModel()
-	const { preciseMode, balancedMode, creativeMode } = useClientMode()
-	const [modesFound, setModesFound] = useState({
+    const router = useRouter()
+    const {modifierModel, descriptiveModel, initialModel, imageModel} = useModel()
+    const { preciseMode, balancedMode, creativeMode } = useClientMode()
+    const [modesFound, setModesFound] = useState({
 		precise: false,
 		balanced: false,
 		creative: false
 	})
 
-	const [selectedVersion, setSelectedVersion] = useState({
+    const [selectedVersion, setSelectedVersion] = useState({
 		prompt: "",
 		subid: "",
 		modelId: "",
 		createdAt: ""
 	})
-	const [prompt, setPrompt] = useState("")
-	const [code, setCode] = useState("")
-	const [mode, setMode] = useState("precise")
-	const [loading, setLoading] = useState(false)
-	const [backendCheck, setBackendCheck] = useState(0)
-	const uiid = params.uiid
-	const [ui, setUi] = useState<{
+    const [prompt, setPrompt] = useState("")
+    const [code, setCode] = useState("")
+    const [mode, setMode] = useState("precise")
+    const [loading, setLoading] = useState(false)
+    const [backendCheck, setBackendCheck] = useState(0)
+    const uiid = params.uiid
+    const [ui, setUi] = useState<{
 		user?: {
 			username: string;
 			imageUrl: string
@@ -76,7 +77,7 @@ const UI = ({ params }: { params: any }) => {
 		forkedFrom: string | null;
 	} | null>(null)
 
-	const [uiState, setUiState] = useState<{
+    const [uiState, setUiState] = useState<{
 		[key: string]: {
 			loading: boolean;
 			code: string;
@@ -96,15 +97,15 @@ const UI = ({ params }: { params: any }) => {
 		},
 	});
 
-	const modeMap: { [key: number]: string } = {
+    const modeMap: { [key: number]: string } = {
 		0: "Precise",
 		1: "Balanced",
 		2: "Creative"
 	}
-	
-	const { input, setInput, imageBase64, setImageBase64 } = useUIState();
 
-	const getCode = async (id: string, iidx: number, jidx: number) => {
+    const { input, setInput, imageBase64, setImageBase64 } = useUIState();
+
+    const getCode = async (id: string, iidx: number, jidx: number) => {
 		try {
 			const code = await getCodeFromId(id)
 			setUi((prevUi) => {
@@ -127,7 +128,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	const setVersion = async (subid: string) => {
+    const setVersion = async (subid: string) => {
 		try {
 			if (ui?.subPrompts.length === 0) return
 			const i = ui?.subPrompts.findIndex(subPrompts => subPrompts.findIndex(subPrompt => subPrompt.SUBId === subid) !== -1)!
@@ -213,7 +214,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	useEffect(() => {
+    useEffect(() => {
 		const fetchUI = async () => {
 			try {
 				const fetchedUI = await getUI(uiid);
@@ -334,7 +335,7 @@ const UI = ({ params }: { params: any }) => {
 		fetchUI();
 	}, []);
 
-	useEffect(() => {
+    useEffect(() => {
 		const incView = async () => {
 			await fetch('/api/view-increment', {
 				method: 'POST',
@@ -347,7 +348,7 @@ const UI = ({ params }: { params: any }) => {
 		incView()
 	}, [])
 
-	useEffect(() => {
+    useEffect(() => {
 		if (backendCheck === 0) return
 		if (ui?.subPrompts.length === 0) {
 			setSelectedVersion({
@@ -365,7 +366,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}, [backendCheck])
 
-	useEffect(() => {
+    useEffect(() => {
 		if (input != "" && prompt != "") {
 			setInput("")
 			if(imageBase64!==""){
@@ -376,7 +377,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}, [input, prompt])
 
-	useEffect(() => {
+    useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (event.key === 'Enter' && !loading) {
 				event.preventDefault();
@@ -390,13 +391,13 @@ const UI = ({ params }: { params: any }) => {
 		};
 	}, [])
 
-	useEffect(() => {
+    useEffect(() => {
 		if (!uiState[mode].loading) {
 			setCode(uiState[mode].code)
 		}
 	}, [uiState.balanced.loading, uiState.creative.loading, uiState.precise.loading])
 
-	const getIdxFromMode = (mode: string) => {
+    const getIdxFromMode = (mode: string) => {
 		if (mode === "precise") {
 			return 0
 		} else if (mode === "balanced") {
@@ -406,7 +407,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	useEffect(() => {
+    useEffect(() => {
 		if (["precise", "balanced", "creative"].includes(mode)) {
 			setCode(uiState[mode].code)
 			const idx = getIdxFromMode(mode)
@@ -421,7 +422,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}, [mode])
 
-	const setPanelView = (view: string) => {
+    const setPanelView = (view: string) => {
 		const panel = ref.current;
 		if (!panel) return;
 		if (view === "desktop") panel.setLayout([0, 100, 0]);
@@ -429,7 +430,7 @@ const UI = ({ params }: { params: any }) => {
 		else if (view === "phone") panel.setLayout([38, 24, 38]);
 	}
 
-	const generatePreciseCode = async () => {
+    const generatePreciseCode = async () => {
 		try {
 			setUiState(preuis => ({
 				...preuis,
@@ -492,7 +493,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	const generateCreativeCode = async () => {
+    const generateCreativeCode = async () => {
 		try {
 			setUiState(preuis => ({
 				...preuis,
@@ -578,7 +579,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	const generateBalancedCode = async () => {
+    const generateBalancedCode = async () => {
 		try {
 			setUiState(preuis => ({
 				...preuis,
@@ -664,7 +665,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	const generateModifiedCode = async () => {
+    const generateModifiedCode = async () => {
 		try {
 			setUiState(preuis => ({
 				...preuis,
@@ -739,7 +740,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	const reGenerateModifiedCode = async () => {
+    const reGenerateModifiedCode = async () => {
 		try {
 			if (!selectedVersion.subid) return
 
@@ -827,7 +828,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	const generateScreenCode = async () => {
+    const generateScreenCode = async () => {
 		try {
 			setUiState(preuis => ({
 				...preuis,
@@ -912,7 +913,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	const generateCodeFromScreenshot = async () => {
+    const generateCodeFromScreenshot = async () => {
 		if(status !== "authenticated") return;
 		if(ui?.userId !== userId) return;
 		if(prompt === "") return;
@@ -1016,7 +1017,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	const generateCode = async () => {
+    const generateCode = async () => {
 		if (status !== "authenticated") return;
 		if (ui?.userId !== userId) return;
 		if (prompt === "") return;
@@ -1159,7 +1160,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	const regenerateCode = async () => {
+    const regenerateCode = async () => {
 		if (userId !== ui?.userId) {
 			toast.warning("Fork the UI to modify the code");
 			return;
@@ -1212,7 +1213,7 @@ const UI = ({ params }: { params: any }) => {
 		}
 	}
 
-	const capture = async () => {
+    const capture = async () => {
 		try {
 			const canvas = await html2canvas(document.getElementById("captureDiv")!, { allowTaint: true, scrollY: -window.scrollY, useCORS: true });
 			const dataUrl2 = canvas.toDataURL('image/jpeg');
@@ -1250,10 +1251,10 @@ const UI = ({ params }: { params: any }) => {
 		}
 	};
 
-	return (
-		<div className="overflow-hidden h-screen">
-			<UIHeader loading={loading} mainPrompt={ui?.prompt!} uiId={uiid} forkedFrom={ui?.forkedFrom ?? ""} />
-			<div className="flex h-screen border-collapse overflow-hidden">
+    return (
+        (<div className="overflow-hidden h-screen">
+            <UIHeader loading={loading} mainPrompt={ui?.prompt!} uiId={uiid} forkedFrom={ui?.forkedFrom ?? ""} />
+            <div className="flex h-screen border-collapse overflow-hidden">
 				<Sidebar subid={selectedVersion.subid} setVersion={setVersion} subPrompts={ui?.subPrompts} />
 				<div className="flex-1 px-4 py-2 space-y-2">
 					<Card className="flex flex-col bg-secondary">
@@ -1274,7 +1275,7 @@ const UI = ({ params }: { params: any }) => {
 								code={code}
 								modesFound={modesFound}
 								regenerateCode={regenerateCode}
-								isLastSubprompt={!!(selectedVersion?.subid && !selectedVersion.subid.endsWith("0")
+								isLastSubprompt={!!((selectedVersion?.subid && !selectedVersion.subid.endsWith("0"))
 									// && selectedVersion.subid === ui?.subPrompts[ui.subPrompts.length - 1][0].SUBId
 								)}
 							/>
@@ -1306,8 +1307,8 @@ const UI = ({ params }: { params: any }) => {
 					}
 				</div>
 			</div>
-		</div>
-	)
+        </div>)
+    );
 }
 
 export default UI

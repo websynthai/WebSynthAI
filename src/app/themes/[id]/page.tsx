@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
@@ -37,7 +37,8 @@ const initialProperties: ColorProperty[] = [
   { name: "Ring", color: "#1a1a1a" },
 ]
 
-export default function ThemeCustomizer({ params }: { params: { id: string } }) {
+export default function ThemeCustomizer(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
   const router = useRouter()
   const [properties, setProperties] = useState<ColorProperty[]>(initialProperties)
   const [heading, setHeading] = useState("Inter")

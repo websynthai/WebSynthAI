@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent, 
 import { timeAgo } from '@/lib/time';
 import { Eye, Heart, RefreshCcw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { CalendarDays, User, LayoutGrid, MessageSquare } from "lucide-react"
 import { getUser } from '@/actions/user';
 import { toast } from 'sonner';
@@ -36,7 +36,8 @@ interface UI {
     }
 }
 
-export default function MinimalistProfilePage({ params }: { params: { username: string } }) {
+export default function MinimalistProfilePage(props: { params: Promise<{ username: string }> }) {
+    const params = use(props.params);
     const [mode, setMode] = useState<string>("ownUI");
     const [uis, setUis] = useState<UI[]>([]);
     const [start, setStart] = useState<number>(0);
