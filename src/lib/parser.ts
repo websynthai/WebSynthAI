@@ -2,15 +2,18 @@ import React from 'react';
 
 type ComponentMap = { [key: string]: React.ComponentType<any> };
 
-const simpleJsxParser = (jsxString: string, components: ComponentMap = {}): React.ReactNode => {
+const simpleJsxParser = (
+  jsxString: string,
+  components: ComponentMap = {},
+): React.ReactNode => {
   const parseAttributes = (attrString: string): { [key: string]: string } => {
     const attrs: { [key: string]: string } = {};
-    attrString.split(' ').forEach(attr => {
+    for (const attr of attrString.split(' ')) {
       const [key, value] = attr.split('=');
       if (key && value) {
         attrs[key] = value.replace(/['"]/g, '');
       }
-    });
+    }
     return attrs;
   };
 
@@ -20,22 +23,22 @@ const simpleJsxParser = (jsxString: string, components: ComponentMap = {}): Reac
     let lastIndex = 0;
     let match: RegExpExecArray | null;
 
-    while ((match = elementRegex.exec(jsx)) !== null) {
+    while (true) {
+      match = elementRegex.exec(jsx);
+      if (match === null) break;
       if (match.index > lastIndex) {
         parts.push(jsx.slice(lastIndex, match.index));
       }
 
-      const [fullMatch, tag, attributes, children, voidTag, voidAttributes] = match;
+      const [fullMatch, tag, attributes, children, voidTag, voidAttributes] =
+        match;
       const componentName = tag || voidTag;
-      const Component = components[componentName] || componentName.toLowerCase();
+      const Component =
+        components[componentName] || componentName.toLowerCase();
       const props = parseAttributes(attributes || voidAttributes || '');
 
       if (children) {
-        parts.push(React.createElement(
-          Component,
-          props,
-          parseJsx(children)
-        ));
+        parts.push(React.createElement(Component, props, parseJsx(children)));
       } else {
         parts.push(React.createElement(Component, props));
       }

@@ -1,6 +1,5 @@
-"use client";
-import { getUIHome } from "@/actions/ui/get-uis";
-import React, { useEffect, useState } from "react";
+'use client';
+import { getUIHome } from '@/actions/ui/get-uis';
 import {
   Avatar,
   AvatarFallback,
@@ -17,12 +16,13 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui";
-import { timeAgo } from "@/lib/time";
-import { useRouter } from "next/navigation";
-import { Eye, Heart } from "lucide-react";
-import PromptBadge from "./prompt-badge";
-import Image from "next/image";
+} from '@/components/ui';
+import { timeAgo } from '@/lib/time';
+import { Eye, Heart } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import PromptBadge from './prompt-badge';
 
 interface UI {
   id: string;
@@ -60,17 +60,10 @@ const HomeUICards = () => {
         <Card
           key={ui.id}
           className="bg-white rounded-xl shadow-md overflow-hidden"
-            onClick={() => router.push(`ui/${ui.id}`)}
+          onClick={() => router.push(`ui/${ui.id}`)}
         >
-          <div
-            className="w-full h-48 relative cursor-pointer"
-          >
-            <Image
-              src={ui.img}
-              alt={ui.prompt}
-              className="object-cover"
-              fill
-            />
+          <div className="w-full h-48 relative cursor-pointer">
+            <Image src={ui.img} alt={ui.prompt} className="object-cover" fill />
           </div>
           <CardContent className="p-2 flex items-center">
             <div className="flex items-start flex-grow min-w-0 relative">
@@ -82,7 +75,7 @@ const HomeUICards = () => {
                     }
                     className="border-2 border-primary h-5 w-5"
                   >
-                    <AvatarImage src={ui.user.imageUrl ?? ""} />
+                    <AvatarImage src={ui.user.imageUrl ?? ''} />
                     <AvatarFallback>
                       {ui.user.username.substring(0, 2)}
                     </AvatarFallback>
@@ -96,7 +89,7 @@ const HomeUICards = () => {
               <Tooltip>
                 <TooltipTrigger className="rounded-full font-semibold ml-2 flex-1 text-ellipsis overflow-hidden whitespace-nowrap">
                   <PromptBadge
-                    variant={"secondary"}
+                    variant={'secondary'}
                     className="rounded-full font-semibold flex text-ellipsis overflow-hidden whitespace-nowrap"
                     prompt={ui.prompt}
                   />
@@ -108,14 +101,14 @@ const HomeUICards = () => {
             </div>
             <div className="flex items-center whitespace-nowrap ml-2 flex-shrink-0">
               <Badge
-                variant={"secondary"}
+                variant={'secondary'}
                 className="flex items-center rounded-s-full font-semibold px-2"
               >
                 <Eye className="h-4 w-4 mr-1" />
                 <p className="text-xs text-gray-600">{ui.viewCount}</p>
               </Badge>
               <Badge
-                variant={"secondary"}
+                variant={'secondary'}
                 className="flex items-center rounded-e-full font-semibold px-2"
               >
                 <Heart className="h-4 w-4 mr-1" />
@@ -130,7 +123,7 @@ const HomeUICards = () => {
       ))}
       {uis.length > 0 && (
         <Card
-          onClick={() => router.push(`explore`)}
+          onClick={() => router.push('explore')}
           className="bg-white hover:bg-gray-200 cursor-pointer border-dashed border-black rounded-xl shadow-md overflow-hidden flex items-center justify-center"
         >
           <CardContent className="font-bold text-xl text-gray-500">

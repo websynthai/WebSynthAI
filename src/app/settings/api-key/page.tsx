@@ -1,16 +1,13 @@
-"use client";
-
-import { ApiKeyInput } from '@/components/api-key-input';
-import { useState } from 'react';
+'use client';
 
 const ApiKeyPage = () => {
-  const [apiKey, setApiKey] = useState('');
+  // const [apiKey, setApiKey] = useState('');
 
-  const handleApiKeyChange = (newApiKey: string) => {
-    setApiKey(newApiKey);
-    // Store the API key in local storage or environment variables
-    localStorage.setItem('apiKey', newApiKey);
-  };
+  // const handleApiKeyChange = (newApiKey: string) => {
+  //   setApiKey(newApiKey);
+  //   // Store the API key in local storage or environment variables
+  //   localStorage.setItem('apiKey', newApiKey);
+  // };
 
   return (
     <div>

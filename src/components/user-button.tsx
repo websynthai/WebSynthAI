@@ -1,9 +1,10 @@
-import { LogOut, Settings, SquareLibrary } from "lucide-react";
-import { User } from "next-auth";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "./ui/button";
+import { signOutGithub } from '@/actions/auth/sign-out';
+import { LogOut, Settings, SquareLibrary } from 'lucide-react';
+import type { User } from 'next-auth';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Button } from './ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { signOutGithub } from "@/actions/auth/sign-out";
+} from './ui/dropdown-menu';
 
 interface UserButtonProps {
   user: User;
@@ -24,7 +24,7 @@ export default function UserButton({ user }: UserButtonProps) {
 
   const handleSignOut = async () => {
     await signOutGithub();
-    router.push("/");
+    router.push('/');
   };
 
   return (
@@ -32,7 +32,7 @@ export default function UserButton({ user }: UserButtonProps) {
       <DropdownMenuTrigger asChild>
         <Button size="icon" className="flex-none rounded-full">
           <Image
-            src={user.imageUrl || ""}
+            src={user.imageUrl || ''}
             alt="User profile picture"
             width={50}
             height={50}

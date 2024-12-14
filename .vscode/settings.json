@@ -1,87 +1,87 @@
 {
-	"[javascript][typescript][javascriptreact][typescriptreact]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[json][html][css][scss]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"css.lint.duplicateProperties": "warning",
-	"css.lint.emptyRules": "warning",
-	"debug.javascript.defaultRuntimeExecutable": {
-		"pwa-node": "node"
-	},
-	"diffEditor.ignoreTrimWhitespace": false,
-	"editor.bracketPairColorization.enabled": true,
-	"editor.codeActionsOnSave": {
-		"source.organizeImports.biome": "explicit",
+  "[javascript][typescript][javascriptreact][typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[json][html][css][scss]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "css.lint.duplicateProperties": "warning",
+  "css.lint.emptyRules": "warning",
+  "debug.javascript.defaultRuntimeExecutable": {
+    "pwa-node": "node"
+  },
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit",
     "quickfix.biome": "explicit"
-	},
-	"editor.cursorBlinking": "smooth",
-	"editor.cursorSmoothCaretAnimation": "explicit",
-	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
-	"editor.detectIndentation": false,
-	"editor.fontFamily": "'Cascadia Mono', 'Fira Code', Consolas, 'Courier New', monospace",
-	"editor.fontLigatures": true,
-	"editor.formatOnPaste": false,
-	"editor.formatOnSave": true,
-	"editor.formatOnType": false,
-	"editor.guides.bracketPairs": "active",
-	"editor.hover.enabled": true,
-	"editor.inlineSuggest.enabled": true,
-	"editor.insertSpaces": true,
-	"editor.linkedEditing": true,
-	"editor.renderWhitespace": "all",
-	"editor.smoothScrolling": true,
-	"editor.suggestSelection": "first",
-	"editor.tabSize": 2,
-	"editor.wordWrap": "on",
-	"eslint.codeActionsOnSave.mode": "all",
-	"eslint.enable": true,
-	"eslint.format.enable": true,
-	"eslint.lintTask.enable": true,
-	"eslint.options": {
-		"ignore": false
-	},
-	"eslint.run": "onSave",
-	"explorer.sortOrder": "type",
-	"extensions.ignoreRecommendations": false,
-	"files.autoSave": "off",
-	"files.eol": "\n",
-	"javascript.preferences.quoteStyle": "single",
-	"javascript.updateImportsOnFileMove.enabled": "always",
-	"less.lint.duplicateProperties": "warning",
-	"less.lint.emptyRules": "warning",
-	"prettier.singleQuote": true,
-	"scss.lint.duplicateProperties": "warning",
-	"scss.lint.emptyRules": "warning",
-	"terminal.integrated.defaultProfile.windows": "Git Bash",
-	"terminal.integrated.profiles.windows": {
-		"Command Prompt": {
-			"args": [],
-			"icon": "terminal-cmd",
-			"path": [
-				"${env:windir}\\Sysnative\\cmd.exe",
-				"${env:windir}\\System32\\cmd.exe"
-			]
-		},
-		"Git Bash": {
-			"source": "Git Bash"
-		},
-		"PowerShell": {
-			"icon": "terminal-powershell",
-			"source": "PowerShell"
-		},
-		"Ubuntu (WSL)": {
-			"args": ["-d", "Ubuntu"],
-			"path": "C:\\WINDOWS\\System32\\wsl.exe"
-		}
-	},
-	"terminal.integrated.shellIntegration.enabled": true,
-	"terminal.integrated.smoothScrolling": true,
-	"window.zoomLevel": 1,
-	"workbench.editor.highlightModifiedTabs": true,
-	"workbench.iconTheme": "material-icon-theme",
-	"cSpell.words": [
+  },
+  "editor.cursorBlinking": "smooth",
+  "editor.cursorSmoothCaretAnimation": "explicit",
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.detectIndentation": false,
+  "editor.fontFamily": "'Cascadia Mono', 'Fira Code', Consolas, 'Courier New', monospace",
+  "editor.fontLigatures": true,
+  "editor.formatOnPaste": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": false,
+  "editor.guides.bracketPairs": "active",
+  "editor.hover.enabled": true,
+  "editor.inlineSuggest.enabled": true,
+  "editor.insertSpaces": true,
+  "editor.linkedEditing": true,
+  "editor.renderWhitespace": "all",
+  "editor.smoothScrolling": true,
+  "editor.suggestSelection": "first",
+  "editor.tabSize": 2,
+  "editor.wordWrap": "on",
+  "eslint.codeActionsOnSave.mode": "all",
+  "eslint.enable": true,
+  "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
+  "eslint.options": {
+    "ignore": false
+  },
+  "eslint.run": "onSave",
+  "explorer.sortOrder": "type",
+  "extensions.ignoreRecommendations": false,
+  "files.autoSave": "off",
+  "files.eol": "\n",
+  "javascript.preferences.quoteStyle": "single",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "less.lint.duplicateProperties": "warning",
+  "less.lint.emptyRules": "warning",
+  "prettier.singleQuote": true,
+  "scss.lint.duplicateProperties": "warning",
+  "scss.lint.emptyRules": "warning",
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "terminal.integrated.profiles.windows": {
+    "Command Prompt": {
+      "args": [],
+      "icon": "terminal-cmd",
+      "path": [
+        "${env:windir}\\Sysnative\\cmd.exe",
+        "${env:windir}\\System32\\cmd.exe"
+      ]
+    },
+    "Git Bash": {
+      "source": "Git Bash"
+    },
+    "PowerShell": {
+      "icon": "terminal-powershell",
+      "source": "PowerShell"
+    },
+    "Ubuntu (WSL)": {
+      "args": ["-d", "Ubuntu"],
+      "path": "C:\\WINDOWS\\System32\\wsl.exe"
+    }
+  },
+  "terminal.integrated.shellIntegration.enabled": true,
+  "terminal.integrated.smoothScrolling": true,
+  "window.zoomLevel": 1,
+  "workbench.editor.highlightModifiedTabs": true,
+  "workbench.iconTheme": "material-icon-theme",
+  "cSpell.words": [
     "cmdk",
     "Codestral",
     "Customizer",
@@ -110,4 +110,7 @@
     "Sujal",
     "Xplores"
   ],
+  "[jsonc]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
 }

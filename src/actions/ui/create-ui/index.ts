@@ -1,11 +1,11 @@
-"use server";
+'use server';
 
-import { db } from "@/lib/db";
+import { db } from '@/lib/db';
 
 export const createUI = async (
   prompt: string,
   userId: string,
-  uiType: string
+  uiType: string,
 ) => {
   try {
     const user = await db.user.findUnique({
@@ -13,7 +13,7 @@ export const createUI = async (
     });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     const data = await db.uI.create({
@@ -22,13 +22,13 @@ export const createUI = async (
         prompt: prompt,
         uiType: uiType,
         updatedAt: new Date(),
-        img: "",
+        img: '',
       },
     });
 
     return data;
   } catch (error) {
-    console.error("Error creating UI:", error);
+    console.error('Error creating UI:', error);
     throw error;
   }
 };

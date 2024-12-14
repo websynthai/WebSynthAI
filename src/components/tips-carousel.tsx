@@ -1,18 +1,18 @@
-import React from 'react';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
+} from '@/components/ui/carousel';
+import React from 'react';
 import { Badge } from './ui';
 
 const tips = [
   "Try different models by changing it in the 'Settings' area.",
-  "Fork ui to use others UI",
+  'Fork ui to use others UI',
   "Customize your experience in the 'Settings' area.",
-  "Share your creations with the community!",
+  'Share your creations with the community!',
   "Don't forget to save your progress regularly.",
 ];
 
@@ -22,7 +22,7 @@ export function TipsCarousel() {
       <CarouselContent>
         {tips.map((tip, index) => (
           <CarouselItem key={index}>
-                <Badge variant={"outline"}>{tip}</Badge>
+            <Badge variant={'outline'}>{tip}</Badge>
           </CarouselItem>
         ))}
       </CarouselContent>

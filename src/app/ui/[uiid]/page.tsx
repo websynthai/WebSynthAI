@@ -1,27 +1,27 @@
-"use client";
-import { createSubPrompt } from "@/actions/ui/create-subprompt";
-import Sidebar from "@/components/sidebar";
-import { Button, Card, Input } from "@/components/ui";
-import UIBody from "@/components/ui-body";
-import UIHeader from "@/components/ui-header";
-import UIRigthHeader from "@/components/ui-right-header";
-import { useUIState } from "@/hooks/useUIState";
-import html2canvas from "html2canvas";
-import { LoaderCircle, SendHorizontal } from "lucide-react";
-import { useEffect, useRef, useState, use } from "react";
-import { ImperativePanelGroupHandle } from "react-resizable-panels";
-import { updateUI } from "@/actions/ui/update-ui";
-import { getUI } from "@/actions/ui/get-uis";
-import { useRouter } from "next/navigation";
-import { getCodeFromId } from "@/actions/ui/get-code";
-import { toast } from "sonner";
-import { updateSubPrompt } from "@/actions/ui/update-subprompt";
-import { isParent } from "@/lib/helper";
-import { useSession } from "next-auth/react";
-import { useModel } from "@/hooks/useModel";
-import { isModelSupported } from "@/lib/supportedllm";
-import { useClientMode } from "@/hooks/useMode";
-import { deleteUI } from "@/actions/ui/delete-ui";
+'use client';
+import { createSubPrompt } from '@/actions/ui/create-subprompt';
+import { deleteUI } from '@/actions/ui/delete-ui';
+import { getCodeFromId } from '@/actions/ui/get-code';
+import { getUI } from '@/actions/ui/get-uis';
+import { updateSubPrompt } from '@/actions/ui/update-subprompt';
+import { updateUI } from '@/actions/ui/update-ui';
+import Sidebar from '@/components/sidebar';
+import { Button, Card, Input } from '@/components/ui';
+import UIBody from '@/components/ui-body';
+import UIHeader from '@/components/ui-header';
+import UIRigthHeader from '@/components/ui-right-header';
+import { useClientMode } from '@/hooks/useMode';
+import { useModel } from '@/hooks/useModel';
+import { useUIState } from '@/hooks/useUIState';
+import { isParent } from '@/lib/helper';
+import { isModelSupported } from '@/lib/supportedllm';
+import html2canvas from 'html2canvas';
+import { LoaderCircle, SendHorizontal } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { use, useEffect, useRef, useState } from 'react';
+import type { ImperativePanelGroupHandle } from 'react-resizable-panels';
+import { toast } from 'sonner';
 
 type SubPrompt = {
   id: string;
@@ -52,14 +52,14 @@ const UI = (props: { params: Promise<any> }) => {
   });
 
   const [selectedVersion, setSelectedVersion] = useState({
-    prompt: "",
-    subid: "",
-    modelId: "",
-    createdAt: "",
+    prompt: '',
+    subid: '',
+    modelId: '',
+    createdAt: '',
   });
-  const [prompt, setPrompt] = useState("");
-  const [code, setCode] = useState("");
-  const [mode, setMode] = useState("precise");
+  const [prompt, setPrompt] = useState('');
+  const [code, setCode] = useState('');
+  const [mode, setMode] = useState('precise');
   const [loading, setLoading] = useState(false);
   const [backendCheck, setBackendCheck] = useState(0);
   const uiid = params.uiid;
@@ -99,22 +99,22 @@ const UI = (props: { params: Promise<any> }) => {
   }>({
     precise: {
       loading: false,
-      code: "",
+      code: '',
     },
     balanced: {
       loading: false,
-      code: "",
+      code: '',
     },
     creative: {
       loading: false,
-      code: "",
+      code: '',
     },
   });
 
   const modeMap: { [key: number]: string } = {
-    0: "Precise",
-    1: "Balanced",
-    2: "Creative",
+    0: 'Precise',
+    1: 'Balanced',
+    2: 'Creative',
   };
 
   const { input, setInput, imageBase64, setImageBase64 } = useUIState();
@@ -125,44 +125,43 @@ const UI = (props: { params: Promise<any> }) => {
       setUi((prevUi) => {
         if (prevUi) {
           const updatedSubPrompts = [...prevUi.subPrompts];
-          updatedSubPrompts[iidx][jidx].code = code!;
+          updatedSubPrompts[iidx][jidx].code = code || '';
           return {
             ...prevUi,
             subPrompts: updatedSubPrompts,
           };
-        } else {
-          return prevUi;
         }
+        return prevUi;
       });
-      return code!;
+      return code;
     } catch (error) {
-      console.error("Error fetching code:", error);
+      console.error('Error fetching code:', error);
       toast.error(
-        `Failed to fetch code for ${modeMap[jidx]}. Please try again.`
+        `Failed to fetch code for ${modeMap[jidx]}. Please try again.`,
       );
-      return "";
+      return '';
     }
   };
 
   const setVersion = async (subid: string) => {
     try {
-      if (ui?.subPrompts.length === 0) return;
-      const i = ui?.subPrompts.findIndex(
+      if (!ui || ui.subPrompts.length === 0) return;
+      const i = ui.subPrompts.findIndex(
         (subPrompts) =>
-          subPrompts.findIndex((subPrompt) => subPrompt.SUBId === subid) !== -1
-      )!;
+          subPrompts.findIndex((subPrompt) => subPrompt.SUBId === subid) !== -1,
+      );
       const subPrompt = ui?.subPrompts[i];
       if (!subPrompt) return;
 
       setSelectedVersion({
         prompt: subPrompt[0].subPrompt,
         subid: subid,
-        modelId: subPrompt[0].modelId || "",
+        modelId: subPrompt[0].modelId || '',
         createdAt: subPrompt[0].createdAt?.toLocaleString(),
       });
 
-      var preciseCode = subPrompt[0].code;
-      if (preciseCode == "") {
+      let preciseCode = subPrompt[0].code;
+      if (preciseCode === '') {
         setUiState((preUIState) => ({
           ...preUIState,
           precise: {
@@ -175,22 +174,24 @@ const UI = (props: { params: Promise<any> }) => {
       setUiState({
         precise: {
           loading: false,
-          code: preciseCode!,
+          code: preciseCode || '',
         },
         balanced: {
           loading: false,
-          code: subPrompt[1]?.code || "",
+          code: subPrompt[1]?.code || '',
         },
         creative: {
           loading: false,
-          code: subPrompt[2]?.code || "",
+          code: subPrompt[2]?.code || '',
         },
       });
-      setMode("precise");
-      setCode(preciseCode!);
+      setMode('precise');
+      if (preciseCode) {
+        setCode(preciseCode);
+      }
     } catch (error) {
-      console.error("Error in setVersion:", error);
-      toast.error("Failed to set version. Please try again.");
+      console.error('Error in setVersion:', error);
+      toast.error('Failed to set version. Please try again.');
     }
   };
 
@@ -201,25 +202,25 @@ const UI = (props: { params: Promise<any> }) => {
         const fetchedUI = await getUI(uiid);
 
         if (!fetchedUI) {
-          console.error("Fetched UI is null or undefined.");
-          toast.error("Failed to fetch UI. Redirecting to home page.");
-          router.push("/");
+          console.error('Fetched UI is null or undefined.');
+          toast.error('Failed to fetch UI. Redirecting to home page.');
+          router.push('/');
           return;
         }
 
         const subPrompts = fetchedUI.subPrompts || [];
 
-        if (!subPrompts.find((sp) => sp.SUBId.startsWith("a-0"))) {
+        if (!subPrompts.find((sp) => sp.SUBId.startsWith('a-0'))) {
           const filterfetchedUI = {
             ...fetchedUI,
             subPrompts: [],
           };
           setUi({
             ...filterfetchedUI,
-            forkedFrom: filterfetchedUI.forkedFrom || "",
+            forkedFrom: filterfetchedUI.forkedFrom || '',
             user: {
               ...filterfetchedUI.user,
-              imageUrl: filterfetchedUI.user.imageUrl || "",
+              imageUrl: filterfetchedUI.user.imageUrl || '',
             },
           });
           setBackendCheck(1);
@@ -227,21 +228,27 @@ const UI = (props: { params: Promise<any> }) => {
         }
 
         const subPromptMap: { [key: string]: SubPrompt } = {
-          "a-0": subPrompts.find((sp) => sp.SUBId.startsWith("a-0")) || {} as SubPrompt,
-          "b-0": subPrompts.find((sp) => sp.SUBId.startsWith("b-0")) || {} as SubPrompt,
-          "c-0": subPrompts.find((sp) => sp.SUBId.startsWith("c-0")) || {} as SubPrompt,
+          'a-0':
+            subPrompts.find((sp) => sp.SUBId.startsWith('a-0')) ||
+            ({} as SubPrompt),
+          'b-0':
+            subPrompts.find((sp) => sp.SUBId.startsWith('b-0')) ||
+            ({} as SubPrompt),
+          'c-0':
+            subPrompts.find((sp) => sp.SUBId.startsWith('c-0')) ||
+            ({} as SubPrompt),
         };
 
         setModesFound((prevmodesFound) => {
-          var modesFound = prevmodesFound;
-          if (Object.keys(subPromptMap["a-0"]).length > 0) {
-            modesFound["precise"] = true;
+          const modesFound = prevmodesFound;
+          if (Object.keys(subPromptMap['a-0']).length > 0) {
+            modesFound.precise = true;
           }
-          if (Object.keys(subPromptMap["b-0"]).length > 0) {
-            modesFound["balanced"] = true;
+          if (Object.keys(subPromptMap['b-0']).length > 0) {
+            modesFound.balanced = true;
           }
-          if (Object.keys(subPromptMap["c-0"]).length > 0) {
-            modesFound["creative"] = true;
+          if (Object.keys(subPromptMap['c-0']).length > 0) {
+            modesFound.creative = true;
           }
           return modesFound;
         });
@@ -249,19 +256,19 @@ const UI = (props: { params: Promise<any> }) => {
         const groupedSubPrompts = [
           [
             {
-              ...subPromptMap["a-0"],
-              id: `${subPromptMap["a-0"]?.id || 'empty'}-precise`,
-              code: "",
+              ...subPromptMap['a-0'],
+              id: `${subPromptMap['a-0']?.id || 'empty'}-precise`,
+              code: '',
             },
             {
-              ...subPromptMap["b-0"],
-              id: `${subPromptMap["b-0"].id || 'empty'}-balanced`,
-              code: "",
+              ...subPromptMap['b-0'],
+              id: `${subPromptMap['b-0'].id || 'empty'}-balanced`,
+              code: '',
             },
             {
-              ...subPromptMap["c-0"],
-              id: `${subPromptMap["c-0"].id || 'empty'}-creative`,
-              code: "",
+              ...subPromptMap['c-0'],
+              id: `${subPromptMap['c-0'].id || 'empty'}-creative`,
+              code: '',
             },
           ] as {
             id: string;
@@ -276,14 +283,15 @@ const UI = (props: { params: Promise<any> }) => {
         ];
 
         const remainingSubPrompts = subPrompts.filter(
-          (subPromptObj) => !["a-0", "b-0", "c-0"].some(prefix => 
-            subPromptObj.SUBId.startsWith(prefix)
-          )
+          (subPromptObj) =>
+            !['a-0', 'b-0', 'c-0'].some((prefix) =>
+              subPromptObj.SUBId.startsWith(prefix),
+            ),
         );
 
         const sortedRemainingSubPrompts = remainingSubPrompts.sort(
           (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
         );
 
         const combinedSubPrompts = [
@@ -293,7 +301,7 @@ const UI = (props: { params: Promise<any> }) => {
               [
                 {
                   ...subPrompt,
-                  code: "",
+                  code: '',
                 },
               ] as {
                 id: string;
@@ -304,7 +312,7 @@ const UI = (props: { params: Promise<any> }) => {
                 codeId: string;
                 modelId?: string;
                 code: string;
-              }[]
+              }[],
           ),
         ];
 
@@ -314,16 +322,16 @@ const UI = (props: { params: Promise<any> }) => {
         };
         setUi({
           ...filterfetchedUI,
-          forkedFrom: filterfetchedUI.forkedFrom || "",
+          forkedFrom: filterfetchedUI.forkedFrom || '',
           user: {
             ...filterfetchedUI.user,
-            imageUrl: filterfetchedUI.user.imageUrl || "",
+            imageUrl: filterfetchedUI.user.imageUrl || '',
           },
         });
         setBackendCheck(1);
       } catch (error) {
-        console.error("Error fetching UI:", error);
-        toast.error("Failed to fetch UI. Please try again.");
+        console.error('Error fetching UI:', error);
+        toast.error('Failed to fetch UI. Please try again.');
       }
     };
 
@@ -332,10 +340,10 @@ const UI = (props: { params: Promise<any> }) => {
 
   useEffect(() => {
     const incView = async () => {
-      await fetch("/api/view-increment", {
-        method: "POST",
+      await fetch('/api/view-increment', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ uiid: uiid }),
       });
@@ -347,25 +355,27 @@ const UI = (props: { params: Promise<any> }) => {
     if (backendCheck === 0) return;
     if (ui?.subPrompts.length === 0) {
       setSelectedVersion({
-        prompt: ui?.prompt!,
-        subid: "0",
+        prompt: ui?.prompt || '',
+        subid: '0',
         modelId: initialModel,
         createdAt: ui?.createdAt?.toLocaleString(),
       });
     } else {
       const lastGeneratedSubPrompt =
         ui?.subPrompts[ui?.subPrompts.length - 1][0];
-      setVersion(lastGeneratedSubPrompt?.SUBId!);
+      if (lastGeneratedSubPrompt) {
+        setVersion(lastGeneratedSubPrompt.SUBId);
+      }
     }
-    if (input != "") {
+    if (input !== '') {
       setPrompt(input);
     }
   }, [backendCheck]);
 
   useEffect(() => {
-    if (input != "" && prompt != "") {
-      setInput("");
-      if (imageBase64 !== "") {
+    if (input !== '' && prompt !== '') {
+      setInput('');
+      if (imageBase64 !== '') {
         generateCodeFromScreenshot();
       } else {
         generateCode();
@@ -375,15 +385,15 @@ const UI = (props: { params: Promise<any> }) => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter" && !loading) {
+      if (event.key === 'Enter' && !loading) {
         event.preventDefault();
         generateCode();
       }
     };
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -391,39 +401,51 @@ const UI = (props: { params: Promise<any> }) => {
     if (!uiState[mode].loading) {
       setCode(uiState[mode].code);
     }
-  }, [mode, uiState, uiState.balanced.loading, uiState.creative.loading, uiState.precise.loading]);
+  }, [
+    mode,
+    uiState,
+    uiState.balanced.loading,
+    uiState.creative.loading,
+    uiState.precise.loading,
+  ]);
 
   const getIdxFromMode = (mode: string) => {
-    if (mode === "precise") {
+    if (mode === 'precise') {
       return 0;
-    } else if (mode === "balanced") {
+    }
+    if (mode === 'balanced') {
       return 1;
-    } else if (mode === "creative") {
+    }
+    if (mode === 'creative') {
       return 2;
     }
   };
 
   useEffect(() => {
-    if (["precise", "balanced", "creative"].includes(mode)) {
+    if (['precise', 'balanced', 'creative'].includes(mode)) {
       setCode(uiState[mode].code);
       const idx = getIdxFromMode(mode);
       const selectedSubPrompt = ui?.subPrompts.find(
         (subPrompts) =>
           subPrompts.findIndex(
-            (subPrompt) => subPrompt.SUBId === selectedVersion.subid
-          ) !== -1
+            (subPrompt) => subPrompt.SUBId === selectedVersion.subid,
+          ) !== -1,
       );
+
       if (
         !selectedSubPrompt ||
         !selectedSubPrompt[0] == null ||
         !selectedSubPrompt[0]?.SUBId
-      )
+      ) {
         return;
+      }
+
+      const index = idx ?? 0;
       setSelectedVersion({
-        prompt: selectedSubPrompt[idx!].subPrompt!,
-        subid: selectedSubPrompt[idx!].SUBId!,
-        modelId: selectedSubPrompt[idx!].modelId || "",
-        createdAt: selectedSubPrompt[idx!].createdAt?.toLocaleString(),
+        prompt: selectedSubPrompt[index].subPrompt,
+        subid: selectedSubPrompt[index].SUBId,
+        modelId: selectedSubPrompt[index].modelId || '',
+        createdAt: selectedSubPrompt[index].createdAt?.toLocaleString(),
       });
     }
   }, [mode]);
@@ -431,15 +453,15 @@ const UI = (props: { params: Promise<any> }) => {
   const setPanelView = (view: string) => {
     const panel = ref.current;
     if (!panel) return;
-    if (view === "desktop") panel.setLayout([0, 100, 0]);
-    else if (view === "tablet") panel.setLayout([27, 46, 27]);
-    else if (view === "phone") panel.setLayout([38, 24, 38]);
+    if (view === 'desktop') panel.setLayout([0, 100, 0]);
+    else if (view === 'tablet') panel.setLayout([27, 46, 27]);
+    else if (view === 'phone') panel.setLayout([38, 24, 38]);
   };
 
   const generatePreciseCode = async () => {
     try {
       // Debug logging
-      console.log("Starting generatePreciseCode with:", {
+      console.log('Starting generatePreciseCode with:', {
         prompt,
         uiid,
         initialModel,
@@ -454,10 +476,10 @@ const UI = (props: { params: Promise<any> }) => {
         },
       }));
 
-      const res = await fetch("/api/generate-code", {
-        method: "POST",
+      const res = await fetch('/api/generate-code', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           codeDescription: prompt,
@@ -467,7 +489,7 @@ const UI = (props: { params: Promise<any> }) => {
       });
 
       // Debug logging
-      console.log("API response status:", res.status);
+      console.log('API response status:', res.status);
 
       if (!res.ok) {
         throw new Error(`API request failed with status ${res.status}`);
@@ -476,14 +498,14 @@ const UI = (props: { params: Promise<any> }) => {
       const response = await res.json();
 
       // Debug logging
-      console.log("API response:", {
+      console.log('API response:', {
         success: response.success,
         hasCode: !!response.code,
         codeLength: response.code?.length,
       });
 
       if (!response.success || !response.code) {
-        throw new Error(response.error || "Invalid response from API");
+        throw new Error(response.error || 'Invalid response from API');
       }
 
       setUiState((preuis) => ({
@@ -502,19 +524,19 @@ const UI = (props: { params: Promise<any> }) => {
           code: !response.code,
           model: !initialModel,
         };
-        console.error("Missing parameters:", missingParams);
+        console.error('Missing parameters:', missingParams);
         throw new Error(
           `Missing required parameters: ${Object.keys(missingParams)
             .filter(Boolean)
-            .join(", ")}`
+            .join(', ')}`,
         );
       }
 
-      const subPromptText = "precise-" + prompt;
-      const parentSUBId = "a-0";
+      const subPromptText = `precise-${prompt}`;
+      const parentSUBId = 'a-0';
 
       // Debug logging
-      console.log("Calling createSubPrompt with:", {
+      console.log('Calling createSubPrompt with:', {
         subPromptText,
         uiid,
         parentSUBId,
@@ -527,14 +549,14 @@ const UI = (props: { params: Promise<any> }) => {
         uiid,
         parentSUBId,
         response.code,
-        initialModel
+        initialModel,
       );
 
       // Debug logging
-      console.log("createSubPrompt result:", result);
+      console.log('createSubPrompt result:', result);
 
       if (!result || !result.data || !result.codeData) {
-        throw new Error("Invalid response from createSubPrompt");
+        throw new Error('Invalid response from createSubPrompt');
       }
 
       return {
@@ -546,9 +568,9 @@ const UI = (props: { params: Promise<any> }) => {
         modelId: result.data.modelId,
       };
     } catch (error) {
-      console.error("Error in generatePreciseCode:", error);
+      console.error('Error in generatePreciseCode:', error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to generate code"
+        error instanceof Error ? error.message : 'Failed to generate code',
       );
       setUiState((preuis) => ({
         ...preuis,
@@ -571,35 +593,33 @@ const UI = (props: { params: Promise<any> }) => {
         },
       }));
 
-      const description = await fetch("/api/page_description", {
-        method: "POST",
+      const description = await fetch('/api/page_description', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           codeCommand: prompt,
-          type: "creative",
+          type: 'creative',
           modelId: descriptiveModel,
         }),
       });
 
       if (!description.ok) {
-        throw new Error("Failed to generate page description");
+        throw new Error('Failed to generate page description');
       }
 
       const pageDescription = await description.json();
-      const codeDescription =
-        prompt +
-        `
+      const codeDescription = `${prompt}
 			 -----
 			 Focus on features like
 			 ${pageDescription}
 			`;
 
-      const res = await fetch("/api/generate-code", {
-        method: "POST",
+      const res = await fetch('/api/generate-code', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           codeDescription,
@@ -611,11 +631,11 @@ const UI = (props: { params: Promise<any> }) => {
       const response = await res.json();
 
       if (!res.ok || response.error) {
-        throw new Error(response.details || "Failed to generate creative code");
+        throw new Error(response.details || 'Failed to generate creative code');
       }
 
-      if (!response.code || typeof response.code !== "string") {
-        throw new Error("Invalid response format from code generation");
+      if (!response.code || typeof response.code !== 'string') {
+        throw new Error('Invalid response format from code generation');
       }
 
       setUiState((preuis) => ({
@@ -626,8 +646,8 @@ const UI = (props: { params: Promise<any> }) => {
         },
       }));
 
-      const subPrompt = "creative-" + prompt;
-      const parentSUBId = "c-0";
+      const subPrompt = `creative-${prompt}`;
+      const parentSUBId = 'c-0';
 
       try {
         const data = await createSubPrompt(
@@ -635,11 +655,11 @@ const UI = (props: { params: Promise<any> }) => {
           uiid,
           parentSUBId,
           response.code,
-          initialModel
+          initialModel,
         );
 
         if (!data || !data.data || !data.codeData) {
-          throw new Error("Failed to create subprompt");
+          throw new Error('Failed to create subprompt');
         }
 
         return {
@@ -651,16 +671,16 @@ const UI = (props: { params: Promise<any> }) => {
           modelId: data.data.modelId,
         };
       } catch (subPromptError) {
-        console.error("Error creating subprompt:", subPromptError);
-        toast.error("Failed to save generated code. Please try again.");
+        console.error('Error creating subprompt:', subPromptError);
+        toast.error('Failed to save generated code. Please try again.');
         throw subPromptError;
       }
     } catch (error) {
-      console.error("Error generating creative code:", error);
+      console.error('Error generating creative code:', error);
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to generate creative code"
+          : 'Failed to generate creative code',
       );
       setUiState((preuis) => ({
         ...preuis,
@@ -683,35 +703,33 @@ const UI = (props: { params: Promise<any> }) => {
         },
       }));
 
-      const description = await fetch("/api/page_description", {
-        method: "POST",
+      const description = await fetch('/api/page_description', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           codeCommand: prompt,
-          type: "balanced",
+          type: 'balanced',
           modelId: descriptiveModel,
         }),
       });
 
       if (!description.ok) {
-        throw new Error("Failed to generate page description");
+        throw new Error('Failed to generate page description');
       }
 
       const pageDescription = await description.json();
-      const codeDescription =
-        prompt +
-        `
+      const codeDescription = `${prompt}
 			 -----
 			 Focus on features like
 			 ${pageDescription}
 			`;
 
-      const res = await fetch("/api/generate-code", {
-        method: "POST",
+      const res = await fetch('/api/generate-code', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           codeDescription,
@@ -723,11 +741,11 @@ const UI = (props: { params: Promise<any> }) => {
       const response = await res.json();
 
       if (!res.ok || response.error) {
-        throw new Error(response.details || "Failed to generate balanced code");
+        throw new Error(response.details || 'Failed to generate balanced code');
       }
 
-      if (!response.code || typeof response.code !== "string") {
-        throw new Error("Invalid response format from code generation");
+      if (!response.code || typeof response.code !== 'string') {
+        throw new Error('Invalid response format from code generation');
       }
 
       setUiState((preuis) => ({
@@ -738,8 +756,8 @@ const UI = (props: { params: Promise<any> }) => {
         },
       }));
 
-      const subPrompt = "balanced-" + prompt;
-      const parentSUBId = "b-0";
+      const subPrompt = `balanced-${prompt}`;
+      const parentSUBId = 'b-0';
 
       try {
         const data = await createSubPrompt(
@@ -747,11 +765,11 @@ const UI = (props: { params: Promise<any> }) => {
           uiid,
           parentSUBId,
           response.code,
-          initialModel
+          initialModel,
         );
 
         if (!data || !data.data || !data.codeData) {
-          throw new Error("Failed to create subprompt");
+          throw new Error('Failed to create subprompt');
         }
 
         return {
@@ -763,16 +781,16 @@ const UI = (props: { params: Promise<any> }) => {
           modelId: data.data.modelId,
         };
       } catch (subPromptError) {
-        console.error("Error creating subprompt:", subPromptError);
-        toast.error("Failed to save generated code. Please try again.");
+        console.error('Error creating subprompt:', subPromptError);
+        toast.error('Failed to save generated code. Please try again.');
         throw subPromptError;
       }
     } catch (error) {
-      console.error("Error generating balanced code:", error);
+      console.error('Error generating balanced code:', error);
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to generate balanced code"
+          : 'Failed to generate balanced code',
       );
       setUiState((preuis) => ({
         ...preuis,
@@ -795,10 +813,10 @@ const UI = (props: { params: Promise<any> }) => {
         },
       }));
 
-      const res = await fetch("/api/modifier", {
-        method: "POST",
+      const res = await fetch('/api/modifier', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           modifyDescription: prompt,
@@ -809,21 +827,21 @@ const UI = (props: { params: Promise<any> }) => {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to generate modified code");
+        throw new Error('Failed to generate modified code');
       }
 
       const response = await res.json();
 
-      if (response == "Error") {
+      if (response === 'Error') {
         setUiState((preuis) => ({
           ...preuis,
           precise: {
-            code: "Error",
+            code: 'Error',
             loading: false,
           },
         }));
-        toast.error("Error modifying code");
-        router.push("/");
+        toast.error('Error modifying code');
+        router.push('/');
         return;
       }
 
@@ -841,7 +859,7 @@ const UI = (props: { params: Promise<any> }) => {
         uiid,
         selectedVersion.subid,
         response,
-        modifierModel
+        modifierModel,
       );
 
       return {
@@ -853,9 +871,9 @@ const UI = (props: { params: Promise<any> }) => {
         modelId: data.data.modelId,
       };
     } catch (error) {
-      console.error("Error generating modified code:", error);
+      console.error('Error generating modified code:', error);
       toast.error(
-        "Failed to generate modified code. Please try again with another model."
+        'Failed to generate modified code. Please try again with another model.',
       );
       setUiState((preuis) => ({
         ...preuis,
@@ -874,7 +892,7 @@ const UI = (props: { params: Promise<any> }) => {
 
       const parent = isParent(selectedVersion.subid, ui?.subPrompts);
       if (parent) {
-        toast.error("Cannot regenerate parent subprompt");
+        toast.error('Cannot regenerate parent subprompt');
         return;
       }
 
@@ -886,10 +904,10 @@ const UI = (props: { params: Promise<any> }) => {
         },
       }));
 
-      const res = await fetch("/api/modifier", {
-        method: "POST",
+      const res = await fetch('/api/modifier', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           modifyDescription: selectedVersion.prompt,
@@ -900,21 +918,21 @@ const UI = (props: { params: Promise<any> }) => {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to regenerate modified code");
+        throw new Error('Failed to regenerate modified code');
       }
 
       const response = await res.json();
 
-      if (response == "Error") {
+      if (response === 'Error') {
         setUiState((preuis) => ({
           ...preuis,
           precise: {
-            code: "Error",
+            code: 'Error',
             loading: false,
           },
         }));
-        toast.error("Error modifying code");
-        router.push("/");
+        toast.error('Error modifying code');
+        router.push('/');
         return;
       }
 
@@ -930,11 +948,11 @@ const UI = (props: { params: Promise<any> }) => {
         uiid,
         response,
         modifierModel,
-        selectedVersion.subid
+        selectedVersion.subid,
       );
 
       if (!data) {
-        toast.error("Error regenerating modified code");
+        toast.error('Error regenerating modified code');
         return;
       }
 
@@ -947,8 +965,8 @@ const UI = (props: { params: Promise<any> }) => {
         modelId: data.data.modelId,
       };
     } catch (error) {
-      console.error("Error regenerating modified code:", error);
-      toast.error("Failed to regenerate modified code. Please try again.");
+      console.error('Error regenerating modified code:', error);
+      toast.error('Failed to regenerate modified code. Please try again.');
       setUiState((preuis) => ({
         ...preuis,
         precise: {
@@ -971,13 +989,13 @@ const UI = (props: { params: Promise<any> }) => {
       }));
 
       toast.success(
-        "Generating code from screenshot. This may take a few seconds."
+        'Generating code from screenshot. This may take a few seconds.',
       );
 
-      const propertiesResponse = await fetch("/api/element-property", {
-        method: "POST",
+      const propertiesResponse = await fetch('/api/element-property', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           refine: false,
@@ -987,17 +1005,17 @@ const UI = (props: { params: Promise<any> }) => {
       });
 
       if (!propertiesResponse.ok) {
-        throw new Error("Failed to generate properties from screenshot");
+        throw new Error('Failed to generate properties from screenshot');
       }
 
-      toast.success("Properties generated from screenshot.");
+      toast.success('Properties generated from screenshot.');
 
       const properties = await propertiesResponse.json();
 
-      const res = await fetch("/api/generate-code-from-screenshot", {
-        method: "POST",
+      const res = await fetch('/api/generate-code-from-screenshot', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           prompt: prompt,
@@ -1008,7 +1026,7 @@ const UI = (props: { params: Promise<any> }) => {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to generate code from screenshot");
+        throw new Error('Failed to generate code from screenshot');
       }
 
       const response = await res.json();
@@ -1021,14 +1039,14 @@ const UI = (props: { params: Promise<any> }) => {
         },
       }));
 
-      const subPrompt = "precise-" + prompt;
-      const parentSUBId = "a-0";
+      const subPrompt = `precise-${prompt}`;
+      const parentSUBId = 'a-0';
       const data = await createSubPrompt(
         subPrompt,
         uiid,
         parentSUBId,
         response,
-        imageModel + "|" + initialModel
+        `${imageModel}|${initialModel}`,
       );
 
       return {
@@ -1040,9 +1058,9 @@ const UI = (props: { params: Promise<any> }) => {
         modelId: data.data.modelId,
       };
     } catch (error) {
-      console.error("Error generating code from screenshot:", error);
+      console.error('Error generating code from screenshot:', error);
       toast.error(
-        "Failed to generate code from screenshot. Please try again with another model."
+        'Failed to generate code from screenshot. Please try again with another model.',
       );
       setUiState((preuis) => ({
         ...preuis,
@@ -1056,9 +1074,9 @@ const UI = (props: { params: Promise<any> }) => {
   };
 
   const generateCodeFromScreenshot = async () => {
-    if (status !== "authenticated") return;
+    if (status !== 'authenticated') return;
     if (ui?.userId !== userId) return;
-    if (prompt === "") return;
+    if (prompt === '') return;
     setLoading(true);
 
     let promises: Promise<
@@ -1075,8 +1093,8 @@ const UI = (props: { params: Promise<any> }) => {
     const previousSubId = selectedVersion.subid;
 
     if (!isModelSupported(imageModel)) {
-      toast.error("ImageModel not supported! Choose another model");
-      router.push("/settings/llm");
+      toast.error('ImageModel not supported! Choose another model');
+      router.push('/settings/llm');
       return;
     }
 
@@ -1088,7 +1106,7 @@ const UI = (props: { params: Promise<any> }) => {
       const successfulResults = resolved
         .filter(
           (
-            result
+            result,
           ): result is PromiseFulfilledResult<
             | {
                 id: string;
@@ -1099,12 +1117,12 @@ const UI = (props: { params: Promise<any> }) => {
                 modelId?: string;
               }
             | undefined
-          > => result.status === "fulfilled" && result.value !== undefined
+          > => result.status === 'fulfilled' && result.value !== undefined,
         )
         .map((result) => result.value);
 
       if (successfulResults.length === 0) {
-        throw new Error("All code generation attempts failed");
+        throw new Error('All code generation attempts failed');
       }
 
       setUi((prevUi) => {
@@ -1114,60 +1132,59 @@ const UI = (props: { params: Promise<any> }) => {
           // TODO when it is image generation handle this in a better way
           updatedSubPrompts.push([
             {
-              id: successfulResults[0]!.id,
+              id: successfulResults[0]?.id || '',
               UIId: uiid,
-              SUBId: successfulResults[0]!.SUBId!,
+              SUBId: successfulResults[0]?.SUBId || '',
               createdAt: new Date(),
-              subPrompt: successfulResults[0]!.subPrompt!,
-              codeId: successfulResults[0]!.codeId,
-              modelId: successfulResults[0]!.modelId || "",
-              code: successfulResults[0]!.code,
+              subPrompt: successfulResults[0]?.subPrompt || '',
+              codeId: successfulResults[0]?.codeId || '',
+              modelId: successfulResults[0]?.modelId || '',
+              code: successfulResults[0]?.code || '',
             },
             {
-              id: "",
+              id: '',
               UIId: uiid,
-              SUBId: "b-0",
+              SUBId: 'b-0',
               createdAt: new Date(),
-              subPrompt: "",
-              codeId: "",
-              modelId: "",
-              code: "",
+              subPrompt: '',
+              codeId: '',
+              modelId: '',
+              code: '',
             },
             {
-              id: "",
+              id: '',
               UIId: uiid,
-              SUBId: "c-0",
+              SUBId: 'c-0',
               createdAt: new Date(),
-              subPrompt: "",
-              codeId: "",
-              modelId: "",
-              code: "",
+              subPrompt: '',
+              codeId: '',
+              modelId: '',
+              code: '',
             },
           ]);
-          setMode("precise");
+          setMode('precise');
 
           return {
             ...prevUi,
             subPrompts: updatedSubPrompts,
           };
-        } else {
-          return prevUi;
         }
+        return prevUi;
       });
-      setPrompt("");
+      setPrompt('');
       setSelectedVersion({
         prompt: prompt,
-        subid: successfulResults[0]!.SUBId!,
-        modelId: successfulResults[0]!.modelId || "",
+        subid: successfulResults[0]?.SUBId || '',
+        modelId: successfulResults[0]?.modelId || '',
         createdAt: selectedVersion.createdAt,
       });
       setLoading(false);
-      setImageBase64("");
+      setImageBase64('');
       capture();
     } catch (error) {
-      console.error("Error generating code:", error);
+      console.error('Error generating code:', error);
       toast.error(
-        "Failed to generate code. Please try again with another model."
+        'Failed to generate code. Please try again with another model.',
       );
       setLoading(false);
       setVersion(previousSubId);
@@ -1175,9 +1192,9 @@ const UI = (props: { params: Promise<any> }) => {
   };
 
   const generateCode = async () => {
-    if (status !== "authenticated") return;
+    if (status !== 'authenticated') return;
     if (ui?.userId !== userId) return;
-    if (prompt === "") return;
+    if (prompt === '') return;
     setLoading(true);
 
     let promises: Promise<
@@ -1195,17 +1212,17 @@ const UI = (props: { params: Promise<any> }) => {
 
     if (ui?.subPrompts.length === 0) {
       if (!isModelSupported(initialModel)) {
-        toast.error("InitialModel not supported! Choose another model");
-        router.push("/settings/llm");
+        toast.error('InitialModel not supported! Choose another model');
+        router.push('/settings/llm');
         return;
       }
       if (!isModelSupported(descriptiveModel)) {
-        toast.error("DescriptiveModel not supported! Choose another model");
-        router.push("/settings/llm");
+        toast.error('DescriptiveModel not supported! Choose another model');
+        router.push('/settings/llm');
         return;
       }
 
-      var modes = {
+      const modes = {
         precise: false,
         balanced: false,
         creative: false,
@@ -1227,13 +1244,13 @@ const UI = (props: { params: Promise<any> }) => {
       setModesFound(modes);
     } else {
       if (!isModelSupported(modifierModel)) {
-        toast.error("ModifierModel not supported! Choose another model");
-        router.push("/settings/llm");
+        toast.error('ModifierModel not supported! Choose another model');
+        router.push('/settings/llm');
         return;
       }
       setSelectedVersion({
         prompt: prompt,
-        subid: "1",
+        subid: '1',
         modelId: modifierModel,
         createdAt: new Date().toLocaleString(),
       });
@@ -1246,7 +1263,7 @@ const UI = (props: { params: Promise<any> }) => {
       const successfulResults = resolved
         .filter(
           (
-            result
+            result,
           ): result is PromiseFulfilledResult<
             | {
                 id: string;
@@ -1257,19 +1274,21 @@ const UI = (props: { params: Promise<any> }) => {
                 modelId?: string;
               }
             | undefined
-          > => result.status === "fulfilled" && result.value !== undefined
+          > => result.status === 'fulfilled' && result.value !== undefined,
         )
         .map((result) => result.value);
 
       if (successfulResults.length === 0) {
         if (ui?.subPrompts.length === 0) {
           toast.error(
-            "All code generation attempts failed. Please try again with another model."
+            'All code generation attempts failed. Please try again with another model.',
           );
-          await deleteUI(uiid, userId!);
-          router.push("/");
+          if (userId) {
+            await deleteUI(uiid, userId);
+            router.push('/');
+          }
         }
-        throw new Error("All code generation attempts failed");
+        throw new Error('All code generation attempts failed');
       }
 
       setUi((prevUi) => {
@@ -1279,53 +1298,52 @@ const UI = (props: { params: Promise<any> }) => {
           if (ui?.subPrompts.length === 0) {
             updatedSubPrompts.push(
               successfulResults.map((result) => ({
-                id: result!.id,
+                id: result?.id || '',
                 UIId: uiid,
-                SUBId: result!.SUBId!,
+                SUBId: result?.SUBId || '',
                 createdAt: new Date(),
-                subPrompt: result!.subPrompt!,
-                codeId: result!.codeId,
-                modelId: result!.modelId || "",
-                code: result!.code,
-              }))
+                subPrompt: result?.subPrompt || '',
+                codeId: result?.codeId || '',
+                modelId: result?.modelId || '',
+                code: result?.code || '',
+              })),
             );
           } else {
             updatedSubPrompts.push([
               {
-                id: successfulResults[0]!.id,
+                id: successfulResults[0]?.id || '',
                 UIId: uiid,
-                SUBId: successfulResults[0]!.SUBId!,
+                SUBId: successfulResults[0]?.SUBId || '',
                 createdAt: new Date(),
-                subPrompt: successfulResults[0]!.subPrompt!,
-                codeId: successfulResults[0]!.codeId,
-                modelId: successfulResults[0]!.modelId || "",
-                code: successfulResults[0]!.code,
+                subPrompt: successfulResults[0]?.subPrompt || '',
+                codeId: successfulResults[0]?.codeId || '',
+                modelId: successfulResults[0]?.modelId || '',
+                code: successfulResults[0]?.code || '',
               },
             ]);
-            setMode("precise");
+            setMode('precise');
           }
 
           return {
             ...prevUi,
             subPrompts: updatedSubPrompts,
           };
-        } else {
-          return prevUi;
         }
+        return prevUi;
       });
-      setPrompt("");
+      setPrompt('');
       setSelectedVersion({
         prompt: prompt,
-        subid: successfulResults[0]!.SUBId!,
-        modelId: successfulResults[0]!.modelId || "",
+        subid: successfulResults[0]?.SUBId || '',
+        modelId: successfulResults[0]?.modelId || '',
         createdAt: selectedVersion.createdAt,
       });
       setLoading(false);
       capture();
     } catch (error) {
-      console.error("Error generating code:", error);
+      console.error('Error generating code:', error);
       toast.error(
-        "Failed to generate code. Please try again with another model."
+        'Failed to generate code. Please try again with another model.',
       );
       setLoading(false);
       setVersion(previousSubId);
@@ -1334,13 +1352,13 @@ const UI = (props: { params: Promise<any> }) => {
 
   const regenerateCode = async () => {
     if (userId !== ui?.userId) {
-      toast.warning("Fork the UI to modify the code");
+      toast.warning('Fork the UI to modify the code');
       return;
     }
     if (loading) return;
     if (!isModelSupported(modifierModel)) {
-      toast.error("ModifierModel not supported! Choose another model");
-      router.push("/settings/llm");
+      toast.error('ModifierModel not supported! Choose another model');
+      router.push('/settings/llm');
       return;
     }
     setLoading(true);
@@ -1357,30 +1375,29 @@ const UI = (props: { params: Promise<any> }) => {
                       ...subPrompt,
                       code: result.code,
                     }
-                  : subPrompt
-              )
+                  : subPrompt,
+              ),
             );
 
             return {
               ...prevUi,
               subPrompts: updatedSubPrompts,
             };
-          } else {
-            return prevUi;
           }
+          return prevUi;
         });
         setSelectedVersion({
-          prompt: result.subPrompt!,
-          subid: result.SUBId!,
-          modelId: result.modelId || "",
+          prompt: result.subPrompt || '',
+          subid: result.SUBId || '',
+          modelId: result.modelId || '',
           createdAt: new Date().toLocaleString(),
         });
         setCode(result.code);
         capture();
       }
     } catch (error) {
-      console.error("Error regenerating code:", error);
-      toast.error("Failed to regenerate code. Please try again.");
+      console.error('Error regenerating code:', error);
+      toast.error('Failed to regenerate code. Please try again.');
       setVersion(previousSubId);
     } finally {
       setLoading(false);
@@ -1389,19 +1406,21 @@ const UI = (props: { params: Promise<any> }) => {
 
   const capture = async () => {
     try {
-      const canvas = await html2canvas(document.getElementById("captureDiv")!, {
-        allowTaint: true,
+      const captureDiv = document.getElementById('captureDiv');
+      if (!captureDiv) return;
+      const canvas = await html2canvas(captureDiv, {
         scrollY: -window.scrollY,
         useCORS: true,
       });
-      const dataUrl2 = canvas.toDataURL("image/jpeg");
+      const dataUrl2 = canvas.toDataURL('image/jpeg');
 
       const img = new Image();
       img.src = dataUrl2;
 
-      img.onload = async function () {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d")!;
+      img.onload = async () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
 
         const width = 1200;
         const scaleFactor = width / img.width;
@@ -1412,18 +1431,18 @@ const UI = (props: { params: Promise<any> }) => {
 
         ctx.drawImage(img, 0, 0, width, height);
 
-        const resizedDataURL = canvas.toDataURL("image/jpeg");
+        const resizedDataURL = canvas.toDataURL('image/jpeg');
 
         await updateUI(uiid, { img: resizedDataURL });
       };
 
-      img.onerror = function (error) {
-        console.error("Error loading the image:", error);
-        toast.error("Failed to load image. Please try again.");
+      img.onerror = (error) => {
+        console.error('Error loading the image:', error);
+        toast.error('Failed to load image. Please try again.');
       };
     } catch (error) {
-      console.error("Error during capture:", error);
-      toast.error("Failed to capture UI. Please try again.");
+      console.error('Error during capture:', error);
+      toast.error('Failed to capture UI. Please try again.');
     }
   };
 
@@ -1431,9 +1450,9 @@ const UI = (props: { params: Promise<any> }) => {
     <div className="overflow-hidden h-screen">
       <UIHeader
         loading={loading}
-        mainPrompt={ui?.prompt!}
+        mainPrompt={ui?.prompt || ''}
         uiId={uiid}
-        forkedFrom={ui?.forkedFrom ?? ""}
+        forkedFrom={ui?.forkedFrom ?? ''}
       />
       <div className="flex h-screen border-collapse overflow-hidden">
         <Sidebar
@@ -1448,10 +1467,10 @@ const UI = (props: { params: Promise<any> }) => {
                 modelId={selectedVersion.modelId}
                 createdAt={selectedVersion.createdAt}
                 UIId={uiid}
-                uiType={ui?.uiType!}
-                views={ui?.viewCount!}
+                uiType={ui?.uiType || 'shadcn-react'}
+                views={ui?.viewCount || 0}
                 subid={selectedVersion.subid}
-                userimg={ui?.user?.imageUrl!}
+                userimg={ui?.user?.imageUrl || ''}
                 subPrompt={selectedVersion.prompt}
                 setPanelView={setPanelView}
                 uiState={uiState}
@@ -1464,7 +1483,7 @@ const UI = (props: { params: Promise<any> }) => {
                   !!(
                     (
                       selectedVersion?.subid &&
-                      !selectedVersion.subid.endsWith("0")
+                      !selectedVersion.subid.endsWith('0')
                     )
                     // && selectedVersion.subid === ui?.subPrompts[ui.subPrompts.length - 1][0].SUBId
                   )
@@ -1472,14 +1491,14 @@ const UI = (props: { params: Promise<any> }) => {
               />
             </div>
             <UIBody
-              isloading={uiState[mode!].loading}
+              isloading={uiState[mode || 'precise'].loading}
               code={code}
-              uiType={ui?.uiType || "shadcn-react"}
+              uiType={ui?.uiType || 'shadcn-react'}
               ref={ref}
               captureRef={captureRef}
             />
           </Card>
-          {status === "authenticated" && ui?.userId === userId && (
+          {status === 'authenticated' && ui?.userId === userId && (
             <Card className="flex w-full max-w-lg space-x-2 bg-black items-center m-auto">
               <Input
                 disabled={loading}

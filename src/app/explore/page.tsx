@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { getUIs } from "@/actions/ui/get-uis";
-import Header from "@/components/header";
-import PromptBadge from "@/components/prompt-badge";
+import { getUIs } from '@/actions/ui/get-uis';
+import Header from '@/components/header';
+import PromptBadge from '@/components/prompt-badge';
 import {
   Avatar,
   AvatarFallback,
@@ -10,6 +10,11 @@ import {
   Badge,
   Card,
   CardContent,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Tabs,
   TabsContent,
   TabsList,
@@ -17,21 +22,16 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui";
-import { timeAgo } from "@/lib/time";
-import { Eye, Heart } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+} from '@/components/ui';
+import { timeAgo } from '@/lib/time';
+import { Eye, Heart } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 const Page = () => {
-  const [mode, setMode] = useState<string>("latest");
-  const [timeRange, setTimeRange] = useState<string>("all");
+  const [mode, setMode] = useState<string>('latest');
+  const [timeRange, setTimeRange] = useState<string>('all');
   const [uis, setUis] = useState<UI[]>([]);
   const [start, setStart] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -103,8 +103,8 @@ const Page = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [handleLoadMore, isLoading]);
 
   return (
@@ -119,7 +119,7 @@ const Page = () => {
           <div className="flex justify-between py-2 ">
             <h1 className="text-3xl font-bold">Explore</h1>
             <div className="flex gap-4">
-              {mode !== "latest" && (
+              {mode !== 'latest' && (
                 <Select
                   onValueChange={handleTimeRangeChange}
                   defaultValue={timeRange}
@@ -161,85 +161,83 @@ const Page = () => {
 
           <TabsContent value={mode}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {uis &&
-                uis.map((ui) => (
-                  <Card
-                    key={ui.id}
-                    className="bg-white rounded-xl shadow-md overflow-hidden"
+              {uis?.map((ui) => (
+                <Card
+                  key={ui.id}
+                  className="bg-white rounded-xl shadow-md overflow-hidden"
+                >
+                  <div
+                    onClick={() => router.push(`ui/${ui.id}`)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        router.push(`ui/${ui.id}`);
+                      }
+                    }}
+                    className="w-full h-48 relative cursor-pointer"
                   >
-                    <div
-                      onClick={() => router.push(`ui/${ui.id}`)}
-                      className="w-full h-48 relative cursor-pointer"
-                    >
-                      <Image
-                        src={ui.img}
-                        alt={ui.prompt}
-                        className="object-cover"
-                        fill
-                      />
-                    </div>
-                    <CardContent className="p-2 flex items-center">
-                      <div className="flex items-start flex-grow min-w-0 relative">
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Avatar
-                              onClick={() =>
-                                router.push(
-                                  `/generations/${ui?.user?.username}`
-                                )
-                              }
-                              className="border-2 border-primary h-5 w-5"
-                            >
-                              <AvatarImage src={ui.user.imageUrl ?? ""} />
-                              <AvatarFallback>
-                                {ui.user.username.substring(0, 2)}
-                              </AvatarFallback>
-                            </Avatar>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{ui.user.username}</p>
-                          </TooltipContent>
-                        </Tooltip>
+                    <Image
+                      src={ui.img}
+                      alt={ui.prompt}
+                      className="object-cover"
+                      fill
+                    />
+                  </div>
+                  <CardContent className="p-2 flex items-center">
+                    <div className="flex items-start flex-grow min-w-0 relative">
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Avatar
+                            onClick={() =>
+                              router.push(`/generations/${ui?.user?.username}`)
+                            }
+                            className="border-2 border-primary h-5 w-5"
+                          >
+                            <AvatarImage src={ui.user.imageUrl ?? ''} />
+                            <AvatarFallback>
+                              {ui.user.username.substring(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{ui.user.username}</p>
+                        </TooltipContent>
+                      </Tooltip>
 
-                        <Tooltip>
-                          <TooltipTrigger className="rounded-full font-semibold ml-2 flex-1 text-ellipsis overflow-hidden whitespace-nowrap">
-                            <PromptBadge
-                              variant={"secondary"}
-                              className="rounded-full font-semibold flex text-ellipsis overflow-hidden whitespace-nowrap"
-                              prompt={ui.prompt}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{ui.prompt}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-                      <div className="flex items-center whitespace-nowrap ml-2 flex-shrink-0">
-                        <Badge
-                          variant={"secondary"}
-                          className="flex items-center rounded-s-full font-semibold px-2"
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          <p className="text-xs text-gray-600">
-                            {ui.viewCount}
-                          </p>
-                        </Badge>
-                        <Badge
-                          variant={"secondary"}
-                          className="flex items-center rounded-e-full font-semibold px-2"
-                        >
-                          <Heart className="h-4 w-4 mr-1" />
-                          <p className="text-xs text-gray-600">
-                            {ui.likesCount}
-                          </p>
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-gray-600 whitespace-nowrap ml-2 flex-shrink-0">
-                        {timeAgo(ui.createdAt)}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
+                      <Tooltip>
+                        <TooltipTrigger className="rounded-full font-semibold ml-2 flex-1 text-ellipsis overflow-hidden whitespace-nowrap">
+                          <PromptBadge
+                            variant={'secondary'}
+                            className="rounded-full font-semibold flex text-ellipsis overflow-hidden whitespace-nowrap"
+                            prompt={ui.prompt}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{ui.prompt}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <div className="flex items-center whitespace-nowrap ml-2 flex-shrink-0">
+                      <Badge
+                        variant={'secondary'}
+                        className="flex items-center rounded-s-full font-semibold px-2"
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        <p className="text-xs text-gray-600">{ui.viewCount}</p>
+                      </Badge>
+                      <Badge
+                        variant={'secondary'}
+                        className="flex items-center rounded-e-full font-semibold px-2"
+                      >
+                        <Heart className="h-4 w-4 mr-1" />
+                        <p className="text-xs text-gray-600">{ui.likesCount}</p>
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-gray-600 whitespace-nowrap ml-2 flex-shrink-0">
+                      {timeAgo(ui.createdAt)}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
               {isLoading &&
                 [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
                   <Card

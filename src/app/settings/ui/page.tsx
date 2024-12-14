@@ -1,13 +1,5 @@
-"use client";
+'use client';
 
-import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Label,
   Select,
@@ -16,10 +8,18 @@ import {
   SelectTrigger,
   SelectValue,
   Switch,
-} from "@/components/ui";
-import { ModeStore, useClientMode } from "@/hooks/useMode";
-import { InfoIcon } from "lucide-react";
-import useLanguage from "@/hooks/useLanguage";
+} from '@/components/ui';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import useLanguage from '@/hooks/useLanguage';
+import { type ModeStore, useClientMode } from '@/hooks/useMode';
+import { InfoIcon } from 'lucide-react';
+import React from 'react';
 
 export default function LLMSettingsPage() {
   const { preciseMode, balancedMode, creativeMode, setMode }: ModeStore =
@@ -52,7 +52,7 @@ export default function LLMSettingsPage() {
               id="preciseMode"
               disabled
               checked={preciseMode}
-              onCheckedChange={(val) => setMode("preciseMode", val)}
+              onCheckedChange={(val) => setMode('preciseMode', val)}
             />
           </div>
           <div className="flex items-center justify-between">
@@ -68,7 +68,7 @@ export default function LLMSettingsPage() {
             <Switch
               id="balancedMode"
               checked={balancedMode}
-              onCheckedChange={(val) => setMode("balancedMode", val)}
+              onCheckedChange={(val) => setMode('balancedMode', val)}
             />
           </div>
           <div className="flex items-center justify-between">
@@ -84,7 +84,7 @@ export default function LLMSettingsPage() {
             <Switch
               id="creativeMode"
               checked={creativeMode}
-              onCheckedChange={(val) => setMode("creativeMode", val)}
+              onCheckedChange={(val) => setMode('creativeMode', val)}
             />
           </div>
           <div className="flex items-center justify-between">
@@ -101,7 +101,7 @@ export default function LLMSettingsPage() {
               id="creativeMode"
               disabled
               checked={false}
-              onCheckedChange={(val) => setMode("creativeMode", val)}
+              onCheckedChange={(val) => setMode('creativeMode', val)}
             />
           </div>
           <div className="bg-blue-50 p-4 rounded-md flex items-start space-x-2 text-blue-800">

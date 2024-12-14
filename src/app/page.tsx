@@ -1,8 +1,8 @@
-"use client";
-import { createUI } from "@/actions/ui/create-ui";
-import Header from "@/components/header";
-import HomeUICards from "@/components/home-uis";
-import Suggestions from "@/components/suggestions";
+'use client';
+import { createUI } from '@/actions/ui/create-ui';
+import Header from '@/components/header';
+import HomeUICards from '@/components/home-uis';
+import Suggestions from '@/components/suggestions';
 import {
   Badge,
   Button,
@@ -13,9 +13,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui";
-import { useAuthModal } from "@/hooks/useAuthModal";
-import { useUIState } from "@/hooks/useUIState";
+} from '@/components/ui';
+import { useAuthModal } from '@/hooks/useAuthModal';
+import { useModel } from '@/hooks/useModel';
+import { useUIState } from '@/hooks/useUIState';
 import {
   Image as ImageIcon,
   InfoIcon,
@@ -23,13 +24,12 @@ import {
   Lock,
   SendHorizontal,
   X,
-} from "lucide-react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { useState, useRef, useEffect } from "react";
-import { useModel } from "@/hooks/useModel";
-import Image from "next/image";
+} from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function Home() {
   const router = useRouter();
@@ -71,19 +71,19 @@ export default function Home() {
 
   const removeImage = () => {
     setSelectedImage(null);
-    setImageBase64("");
+    setImageBase64('');
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   };
 
   const generateUI = async () => {
     if (!input) {
-      toast.error("Please enter a message");
+      toast.error('Please enter a message');
       return;
     }
     try {
-      if (status === "authenticated" && userId) {
+      if (status === 'authenticated' && userId) {
         setLoading(true);
         const ui = await createUI(input, userId, uiType);
         router.push(`/ui/${ui.id}`);
@@ -91,24 +91,24 @@ export default function Home() {
       } else {
         toggle();
       }
-    } catch (error) {
-      toast.error("Failed to generate UI");
+    } catch (_error) {
+      toast.error('Failed to generate UI');
       setLoading(false);
     }
   };
 
   useEffect(() => {
     const cv = 3;
-    const lv = parseInt(localStorage.getItem("cv") || "0");
+    const lv = Number.parseInt(localStorage.getItem('cv') || '0');
     if (lv < cv) {
       toast.info(
-        "Changing default models to recommended models for better performance."
+        'Changing default models to recommended models for better performance.',
       );
-      setInitialModel("glhf:hf:meta-llama/Meta-Llama-3.1-405B-Instruct");
-      setModifierModel("glhf:hf:meta-llama/Meta-Llama-3.1-70B-Instruct");
-      setDescriptiveModel("glhf:hf:google/gemma-2-27b-it");
-      setImageModel("mistral:pixtral-12b-2409");
-      localStorage.setItem("cv", cv.toString());
+      setInitialModel('glhf:hf:meta-llama/Meta-Llama-3.1-405B-Instruct');
+      setModifierModel('glhf:hf:meta-llama/Meta-Llama-3.1-70B-Instruct');
+      setDescriptiveModel('glhf:hf:google/gemma-2-27b-it');
+      setImageModel('mistral:pixtral-12b-2409');
+      localStorage.setItem('cv', cv.toString());
     }
   }, [setDescriptiveModel, setImageModel, setInitialModel, setModifierModel]);
 
@@ -151,9 +151,7 @@ export default function Home() {
               />
               <ImageIcon
                 aria-label="Upload image"
-                onClick={() =>
-                  fileInputRef.current && fileInputRef.current.click()
-                }
+                onClick={() => fileInputRef.current?.click()}
                 className="text-gray-200 bg-black hover:bg-gray-800"
               />
               {selectedImage && (
@@ -206,8 +204,8 @@ export default function Home() {
                 </SelectContent>
               </Select>
               <Button
-                variant={"default"}
-                onClick={() => router.push("/settings/llm")}
+                variant={'default'}
+                onClick={() => router.push('/settings/llm')}
                 className="w-min focus:ring-0 h-8"
               >
                 LLM
@@ -223,7 +221,7 @@ export default function Home() {
               </p>
             </div>
           )}
-          {uiType === "nextui-react" && (
+          {uiType === 'nextui-react' && (
             <div className="bg-yellow-50 p-2 rounded-md flex items-start space-x-2 text-yellow-800">
               <InfoIcon className="w-5 h-5 mt-0.5 flex-shrink-0" />
               <p className="text-sm">
@@ -247,7 +245,7 @@ export default function Home() {
             </div>
             <div className="flex justify-center mt-3">
               <Badge
-                onClick={() => router.push("/settings/llm")}
+                onClick={() => router.push('/settings/llm')}
                 variant="default"
                 className="text-sm border-spacing-1 cursor-pointer"
               >

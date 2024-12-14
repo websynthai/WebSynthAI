@@ -1,20 +1,22 @@
-"use server";
+'use server';
 
-import { db } from "@/lib/db";
-import { z } from "zod";
-import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
+import { db } from '@/lib/db';
+import { Prisma } from '@prisma/client';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
 const SubPromptInput = z.object({
   subPrompt: z.string().min(1),
   UIId: z.string().min(1),
   parentSUBId: z.string().min(1),
   code: z.string().min(1),
-  modelId: z.string().min(1)
+  modelId: z.string().min(1),
 });
 
 const log = (message: string, data?: any) => {
-  process.stdout.write(`[INFO] ${message}${data ? `: ${JSON.stringify(data, null, 2)}` : ''}\n`);
+  process.stdout.write(
+    `[INFO] ${message}${data ? `: ${JSON.stringify(data, null, 2)}` : ''}\n`,
+  );
 };
 
 export const createSubPrompt = async (
@@ -22,11 +24,17 @@ export const createSubPrompt = async (
   UIId: string,
   parentSUBId: string,
   code: string,
-  modelId: string
+  modelId: string,
 ) => {
   try {
     // 1. Validate input
-    const input = SubPromptInput.parse({ subPrompt, UIId, parentSUBId, code, modelId });
+    const input = SubPromptInput.parse({
+      subPrompt,
+      UIId,
+      parentSUBId,
+      code,
+      modelId,
+    });
     log('Input validated');
 
     // 2. Find next available SUBId
@@ -34,17 +42,18 @@ export const createSubPrompt = async (
       where: {
         UIId: input.UIId,
         SUBId: {
-          startsWith: input.parentSUBId
-        }
+          startsWith: input.parentSUBId,
+        },
       },
       orderBy: {
-        SUBId: 'desc'
-      }
+        SUBId: 'desc',
+      },
     });
 
-    const finalSUBId = existingSubPrompts.length === 0 
-      ? input.parentSUBId 
-      : `${input.parentSUBId}-${existingSubPrompts.length}`;
+    const finalSUBId =
+      existingSubPrompts.length === 0
+        ? input.parentSUBId
+        : `${input.parentSUBId}-${existingSubPrompts.length}`;
 
     log('Generated SUBId', finalSUBId);
 
@@ -52,7 +61,7 @@ export const createSubPrompt = async (
     const result = await db.$transaction(async (tx) => {
       // Create code first
       const codeEntry = await tx.code.create({
-        data: { code: input.code }
+        data: { code: input.code },
       });
       log('Code created', { id: codeEntry.id });
 
@@ -64,14 +73,14 @@ export const createSubPrompt = async (
           SUBId: finalSUBId,
           codeId: codeEntry.id,
           modelId: input.modelId,
-        }
+        },
       });
       log('SubPrompt created', { id: subPrompt.id });
 
       // Update UI timestamp
       await tx.uI.update({
         where: { id: input.UIId },
-        data: { updatedAt: new Date() }
+        data: { updatedAt: new Date() },
       });
 
       return { data: subPrompt, codeData: codeEntry };
@@ -79,15 +88,17 @@ export const createSubPrompt = async (
 
     revalidatePath(`/ui/${UIId}`);
     return result;
-
   } catch (error) {
     // If it's a unique constraint violation, retry with a timestamp
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
       try {
         const timestamp = Date.now();
         const result = await db.$transaction(async (tx) => {
           const codeEntry = await tx.code.create({
-            data: { code }
+            data: { code },
           });
 
           const sP = await tx.subPrompt.create({
@@ -97,12 +108,12 @@ export const createSubPrompt = async (
               SUBId: `${parentSUBId}-${timestamp}`,
               codeId: codeEntry.id,
               modelId,
-            }
+            },
           });
 
           await tx.uI.update({
             where: { id: UIId },
-            data: { updatedAt: new Date() }
+            data: { updatedAt: new Date() },
           });
 
           return { data: sP, codeData: codeEntry };
@@ -110,7 +121,7 @@ export const createSubPrompt = async (
 
         revalidatePath(`/ui/${UIId}`);
         return result;
-      } catch (retryError) {
+      } catch (_retryError) {
         throw new Error('Failed to create subPrompt after retry');
       }
     }

@@ -1,4 +1,10 @@
-"use client";
+'use client';
+import { toggleLike } from '@/actions/ui/toggle-like-ui';
+import { useAuthModal } from '@/hooks/useAuthModal';
+import useTheme from '@/hooks/useTheme';
+import { embeddedCode } from '@/lib/code';
+import { getCss } from '@/lib/globalCss';
+import { themes as defaultThemes, themes } from '@/lib/themes';
 import {
   CodeXml,
   Cpu,
@@ -11,15 +17,17 @@ import {
   Share2,
   Smartphone,
   Tablet,
-} from "lucide-react";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { Separator } from "./ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
-import { useEffect, useState } from "react";
-import LikeButton from "./like-button";
-import { toggleLike } from "@/actions/ui/toggle-like-ui";
+} from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { toast } from 'sonner';
+import LikeButton from './like-button';
+import PromptBadge from './prompt-badge';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 import {
   Dialog,
   DialogContent,
@@ -28,32 +36,24 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
-import { embeddedCode } from "@/lib/code";
-import PromptBadge from "./prompt-badge";
-import { useAuthModal } from "@/hooks/useAuthModal";
-import { toast } from "sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useSession } from "next-auth/react";
+} from './ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import useTheme from "@/hooks/useTheme";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { getCss } from "@/lib/globalCss";
-import { themes as defaultThemes, themes } from "@/lib/themes";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from './ui/select';
+import { Separator } from './ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 const UIRigthHeader = ({
   UIId,
@@ -97,15 +97,15 @@ const UIRigthHeader = ({
   regenerateCode: () => void;
   isLastSubprompt: boolean;
 }) => {
-  const [type, setType] = useState("desktop");
+  const [type, setType] = useState('desktop');
   const { data: session } = useSession();
   const userId = session?.user?.id;
 
   const { toggle } = useAuthModal();
   const [liked, setLiked] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [activeTab, setActiveTab] = useState("code");
-  const [cssCode, setCssCode] = useState("");
+  const [activeTab, setActiveTab] = useState('code');
+  const [cssCode, setCssCode] = useState('');
   const [customThemes, setCustomThemes] = useState<any[]>([]);
 
   useEffect(() => {
@@ -113,12 +113,13 @@ const UIRigthHeader = ({
   }, [setPanelView, type]);
 
   useEffect(() => {
-    const globalCss = getCss(themes.find((t) => t.id === theme)!);
+    const themeObj = themes.find((t) => t.id === theme) || themes[0];
+    const globalCss = getCss(themeObj);
     setCssCode(globalCss);
   }, [theme]);
 
   useEffect(() => {
-    const storedThemes = localStorage.getItem("customThemes");
+    const storedThemes = localStorage.getItem('customThemes');
     if (storedThemes) {
       setCustomThemes(JSON.parse(storedThemes));
     }
@@ -129,7 +130,7 @@ const UIRigthHeader = ({
       toggle();
       return;
     }
-    const liked = await toggleLike(userId!, UIId);
+    const liked = await toggleLike(userId, UIId);
     setLiked(liked.liked);
   };
 
@@ -138,11 +139,11 @@ const UIRigthHeader = ({
     navigator.clipboard
       .writeText(url)
       .then(() => {
-        toast.success("Link copied to clipboard!");
+        toast.success('Link copied to clipboard!');
       })
       .catch((err) => {
-        console.error("Failed to copy: ", err);
-        toast.error("Failed to copy link. Please try again.");
+        console.error('Failed to copy: ', err);
+        toast.error('Failed to copy link. Please try again.');
       });
   };
 
@@ -151,24 +152,24 @@ const UIRigthHeader = ({
       regenerateCode();
     } else {
       toast.info(
-        "Regeneration is only available for the last generated subprompt."
+        'Regeneration is only available for the last generated subprompt.',
       );
     }
   };
 
   const handleCopyCode = () => {
     const contentToCopy =
-      activeTab === "code" ? embeddedCode(code, uiType) : cssCode;
+      activeTab === 'code' ? embeddedCode(code, uiType) : cssCode;
     navigator.clipboard
-      .writeText(contentToCopy || "")
+      .writeText(contentToCopy || '')
       .then(() => {
         toast.success(
-          `${activeTab === "code" ? "React" : "CSS"} code copied to clipboard!`
+          `${activeTab === 'code' ? 'React' : 'CSS'} code copied to clipboard!`,
         );
       })
       .catch((err) => {
-        console.error("Failed to copy code: ", err);
-        toast.error("Failed to copy code. Please try again.");
+        console.error('Failed to copy code: ', err);
+        toast.error('Failed to copy code. Please try again.');
       });
   };
 
@@ -180,11 +181,11 @@ const UIRigthHeader = ({
           <AvatarFallback>A</AvatarFallback>
         </Avatar>
         <Separator className="h-6" orientation="vertical" />
-        <Badge variant={"secondary"} className="rounded-xl p-0 m-0">
+        <Badge variant={'secondary'} className="rounded-xl p-0 m-0">
           <Tooltip>
             <TooltipTrigger className="rounded-full font-semibold ml-2 flex-1 text-ellipsis overflow-hidden whitespace-nowrap">
               <PromptBadge
-                variant={"secondary"}
+                variant={'secondary'}
                 className="rounded-full font-semibold flex text-ellipsis overflow-hidden whitespace-nowrap max-w-96"
                 prompt={subPrompt}
               />
@@ -194,26 +195,26 @@ const UIRigthHeader = ({
             </TooltipContent>
           </Tooltip>
           <Button
-            variant={"ghost"}
+            variant={'ghost'}
             className="rounded-xl bg-gray-50 w-7 h-7"
-            size={"icon"}
+            size={'icon'}
             onClick={handleRegenerateCode}
             disabled={!isLastSubprompt}
             title={
               isLastSubprompt
-                ? "Regenerate code"
-                : "Regeneration is only available for the last generated subprompt"
+                ? 'Regenerate code'
+                : 'Regeneration is only available for the last generated subprompt'
             }
           >
             <RefreshCw
-              className={`m-0${isLastSubprompt ? "black" : "white"}`}
+              className={`m-0${isLastSubprompt ? 'black' : 'white'}`}
               size={16}
             />
           </Button>
         </Badge>
 
         <Badge
-          variant={"secondary"}
+          variant={'secondary'}
           className="rounded-sm text-xs text-gray-500 whitespace-nowrap"
         >
           {views} views
@@ -227,15 +228,15 @@ const UIRigthHeader = ({
           <DropdownMenuContent>
             <DropdownMenuItem className="flex gap-3">
               <p className="text-gray-400">ModelId : </p>
-              <Badge variant={"secondary"}>{modelId || ""}</Badge>
+              <Badge variant={'secondary'}>{modelId || ''}</Badge>
             </DropdownMenuItem>
             <DropdownMenuItem className="flex gap-3">
               <p className="text-gray-400">Created At : </p>
-              <Badge variant={"secondary"}>{createdAt || ""}</Badge>
+              <Badge variant={'secondary'}>{createdAt || ''}</Badge>
             </DropdownMenuItem>
             <DropdownMenuItem className="flex gap-3">
               <p className="text-gray-400">UI Type :</p>
-              <Badge variant={"secondary"}>{uiType}</Badge>
+              <Badge variant={'secondary'}>{uiType}</Badge>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -279,7 +280,7 @@ const UIRigthHeader = ({
               <PackageSearch className="h-4 w-4 ml-1" />
             )}
           </ToggleGroupItem>
-          {subid.endsWith("0") && modesFound?.balanced && (
+          {subid.endsWith('0') && modesFound?.balanced && (
             <ToggleGroupItem value="balanced" aria-label="Toggle italic">
               Balanced
               {uiState.balanced.loading ? (
@@ -289,7 +290,7 @@ const UIRigthHeader = ({
               )}
             </ToggleGroupItem>
           )}
-          {subid.endsWith("0") && modesFound?.creative && (
+          {subid.endsWith('0') && modesFound?.creative && (
             <ToggleGroupItem value="creative" aria-label="Toggle underline">
               Creative
               {uiState.creative.loading ? (
@@ -329,7 +330,7 @@ const UIRigthHeader = ({
               <DialogTitle>Code View</DialogTitle>
               <DialogDescription>
                 <PromptBadge
-                  variant={"secondary"}
+                  variant={'secondary'}
                   className="rounded-xl"
                   prompt={subPrompt}
                 />
@@ -347,7 +348,7 @@ const UIRigthHeader = ({
               <TabsContent value="code">
                 <div className="py-4 max-h-[70vh] overflow-y-auto">
                   <SyntaxHighlighter language="jsx" style={oneLight}>
-                    {embeddedCode(code, uiType) || ""}
+                    {embeddedCode(code, uiType) || ''}
                   </SyntaxHighlighter>
                 </div>
               </TabsContent>
@@ -361,7 +362,7 @@ const UIRigthHeader = ({
             </Tabs>
             <DialogFooter className="flex sm:justify-start justify-start">
               <Button onClick={handleCopyCode}>
-                Copy {activeTab === "code" ? "React" : "CSS"} Code
+                Copy {activeTab === 'code' ? 'React' : 'CSS'} Code
               </Button>
             </DialogFooter>
           </DialogContent>

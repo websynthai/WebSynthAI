@@ -1,23 +1,23 @@
-"use client"
-import SettingsSidebar from '@/components/settings-sidebar'
-import Header from '@/components/header'
-import { useSession } from 'next-auth/react'
-import { useEffect } from 'react'
-import { redirect } from 'next/navigation'
+'use client';
+import Header from '@/components/header';
+import SettingsSidebar from '@/components/settings-sidebar';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function SettingsLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-    const { status } = useSession()
-    
-    useEffect(() => {
-      if(status==='unauthenticated') {
-          redirect('/')
-      }
-    }, [status])
-    
+  const { status } = useSession();
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      redirect('/');
+    }
+  }, [status]);
+
   return (
     <div>
       <Header />
@@ -25,11 +25,9 @@ export default function SettingsLayout({
         <h1 className="text-3xl font-bold mb-6">Settings</h1>
         <div className="flex">
           <SettingsSidebar />
-          <div className="flex-1 ml-8">
-            {children}
-          </div>
+          <div className="flex-1 ml-8">{children}</div>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-"use client"
-import Link from 'next/link'
-import { cn } from "@/lib/utils"
-import { usePathname } from 'next/navigation'
+'use client';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const sidebarItems = [
   { name: 'General', href: '/settings/general' },
@@ -11,10 +11,10 @@ const sidebarItems = [
   { name: 'LLM', href: '/settings/llm' }, // Updated this line
   { name: 'API keys', href: '/settings/api-key' },
   { name: 'About', href: '/settings/about' },
-]
+];
 
 export default function SettingsSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <nav className="w-60 bg-gray-50 h-full">
@@ -25,10 +25,10 @@ export default function SettingsSidebar() {
               <Link
                 href={item.href}
                 className={cn(
-                  "block px-3 py-2 rounded-md text-sm font-medium",
+                  'block px-3 py-2 rounded-md text-sm font-medium',
                   pathname === item.href
-                    ? "bg-gray-200 text-gray-900"
-                    : "text-gray-700 hover:bg-gray-100"
+                    ? 'bg-gray-200 text-gray-900'
+                    : 'text-gray-700 hover:bg-gray-100',
                 )}
               >
                 {item.name}
@@ -38,5 +38,5 @@ export default function SettingsSidebar() {
         </ul>
       </div>
     </nav>
-  )
+  );
 }

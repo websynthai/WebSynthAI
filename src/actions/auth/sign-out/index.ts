@@ -1,5 +1,5 @@
-import { signOut } from "next-auth/react";
+import { signOut } from 'next-auth/react';
 
 export const signOutGithub = async () => {
-    await signOut({ redirect: false });
-}
+  await signOut({ redirect: false });
+};

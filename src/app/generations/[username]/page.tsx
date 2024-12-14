@@ -1,38 +1,30 @@
-"use client";
-import { getUIProfile, getUIs } from "@/actions/ui/get-uis";
-import Header from "@/components/header";
-import PromptBadge from "@/components/prompt-badge";
+'use client';
+import { getUIProfile, getUIs } from '@/actions/ui/get-uis';
+import { getUser } from '@/actions/user';
+import Header from '@/components/header';
+import PromptBadge from '@/components/prompt-badge';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Badge,
-  Button,
   Card,
   CardContent,
-  CardFooter,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui";
-import { timeAgo } from "@/lib/time";
-import { Eye, Heart, RefreshCcw } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, use, useCallback } from "react";
-import { CalendarDays, User, LayoutGrid, MessageSquare } from "lucide-react";
-import { getUser } from "@/actions/user";
-import { toast } from "sonner";
-import Image from "next/image";
+} from '@/components/ui';
+import { timeAgo } from '@/lib/time';
+import { Eye, Heart } from 'lucide-react';
+import { CalendarDays, User as UserIcon } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { use, useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface User {
   id: string;
@@ -63,7 +55,7 @@ export default function MinimalistProfilePage(props: {
   params: Promise<{ username: string }>;
 }) {
   const params = use(props.params);
-  const [mode, setMode] = useState<string>("ownUI");
+  const [mode, setMode] = useState<string>('ownUI');
   const [uis, setUis] = useState<UI[]>([]);
   const [start, setStart] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -78,7 +70,7 @@ export default function MinimalistProfilePage(props: {
       setIsLoading(true);
       const userObj = await getUser(username);
       if (!userObj) {
-        toast.warning("User not found");
+        toast.warning('User not found');
       }
       setUser(userObj);
     };
@@ -129,8 +121,8 @@ export default function MinimalistProfilePage(props: {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [handleLoadMore, isLoading]);
 
   return (
@@ -145,7 +137,7 @@ export default function MinimalistProfilePage(props: {
                   onClick={() => router.push(`/generations/${user?.username}`)}
                   className="h-32 w-32 border-2 border-gray-200"
                 >
-                  <AvatarImage src={user?.imageUrl || ""} alt={"A"} />
+                  <AvatarImage src={user?.imageUrl || ''} alt={'A'} />
                   <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col space-y-3 text-center sm:text-left">
@@ -153,15 +145,15 @@ export default function MinimalistProfilePage(props: {
                     {user?.name}
                   </h2>
                   <p className="text-lg text-gray-600 flex items-center justify-center sm:justify-start">
-                    <User className="mr-2 h-5 w-5" />@{user?.username}
+                    <UserIcon className="mr-2 h-5 w-5" />@{user?.username}
                   </p>
                   <p className="text-base text-gray-500 flex items-center justify-center sm:justify-start">
                     <CalendarDays className="mr-2 h-5 w-5" />
-                    Joined{" "}
-                    {user?.createdAt.toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
+                    Joined{' '}
+                    {user?.createdAt.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
                     })}
                   </p>
                   <div className="border-t border-gray-200 pt-8">
@@ -219,85 +211,83 @@ export default function MinimalistProfilePage(props: {
 
           <TabsContent value={mode}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {uis &&
-                uis.map((ui) => (
-                  <Card
-                    key={ui.id}
-                    className="bg-white rounded-xl shadow-md overflow-hidden"
+              {uis?.map((ui) => (
+                <Card
+                  key={ui.id}
+                  className="bg-white rounded-xl shadow-md overflow-hidden"
+                >
+                  <div
+                    onClick={() => router.push(`/ui/${ui.id}`)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        router.push(`/ui/${ui.id}`);
+                      }
+                    }}
+                    className="w-full h-48 relative cursor-pointer"
                   >
-                    <div
-                      onClick={() => router.push(`/ui/${ui.id}`)}
-                      className="w-full h-48 relative cursor-pointer"
-                    >
-                      <Image
-                        src={ui.img}
-                        alt={ui.prompt}
-                        className="object-cover"
-                        fill
-                      />
-                    </div>
-                    <CardContent className="p-2 flex items-center">
-                      <div className="flex items-start flex-grow min-w-0 relative">
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Avatar
-                              onClick={() =>
-                                router.push(
-                                  `/generations/${ui?.user?.username}`
-                                )
-                              }
-                              className="border-2 border-primary h-5 w-5"
-                            >
-                              <AvatarImage src={ui.user.imageUrl ?? ""} />
-                              <AvatarFallback>
-                                {ui.user.username.substring(0, 2)}
-                              </AvatarFallback>
-                            </Avatar>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{ui.user.username}</p>
-                          </TooltipContent>
-                        </Tooltip>
+                    <Image
+                      src={ui.img}
+                      alt={ui.prompt}
+                      className="object-cover"
+                      fill
+                    />
+                  </div>
+                  <CardContent className="p-2 flex items-center">
+                    <div className="flex items-start flex-grow min-w-0 relative">
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Avatar
+                            onClick={() =>
+                              router.push(`/generations/${ui?.user?.username}`)
+                            }
+                            className="border-2 border-primary h-5 w-5"
+                          >
+                            <AvatarImage src={ui.user.imageUrl ?? ''} />
+                            <AvatarFallback>
+                              {ui.user.username.substring(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{ui.user.username}</p>
+                        </TooltipContent>
+                      </Tooltip>
 
-                        <Tooltip>
-                          <TooltipTrigger className="rounded-full font-semibold ml-2 flex-1 text-ellipsis overflow-hidden whitespace-nowrap">
-                            <PromptBadge
-                              variant={"secondary"}
-                              className="rounded-full font-semibold flex text-ellipsis overflow-hidden whitespace-nowrap"
-                              prompt={ui.prompt}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{ui.prompt}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-                      <div className="flex items-center whitespace-nowrap ml-2 flex-shrink-0">
-                        <Badge
-                          variant={"secondary"}
-                          className="flex items-center rounded-s-full font-semibold px-2"
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          <p className="text-xs text-gray-600">
-                            {ui.viewCount}
-                          </p>
-                        </Badge>
-                        <Badge
-                          variant={"secondary"}
-                          className="flex items-center rounded-e-full font-semibold px-2"
-                        >
-                          <Heart className="h-4 w-4 mr-1" />
-                          <p className="text-xs text-gray-600">
-                            {ui.likesCount}
-                          </p>
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-gray-600 whitespace-nowrap ml-2 flex-shrink-0">
-                        {timeAgo(ui.createdAt)}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
+                      <Tooltip>
+                        <TooltipTrigger className="rounded-full font-semibold ml-2 flex-1 text-ellipsis overflow-hidden whitespace-nowrap">
+                          <PromptBadge
+                            variant={'secondary'}
+                            className="rounded-full font-semibold flex text-ellipsis overflow-hidden whitespace-nowrap"
+                            prompt={ui.prompt}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{ui.prompt}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <div className="flex items-center whitespace-nowrap ml-2 flex-shrink-0">
+                      <Badge
+                        variant={'secondary'}
+                        className="flex items-center rounded-s-full font-semibold px-2"
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        <p className="text-xs text-gray-600">{ui.viewCount}</p>
+                      </Badge>
+                      <Badge
+                        variant={'secondary'}
+                        className="flex items-center rounded-e-full font-semibold px-2"
+                      >
+                        <Heart className="h-4 w-4 mr-1" />
+                        <p className="text-xs text-gray-600">{ui.likesCount}</p>
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-gray-600 whitespace-nowrap ml-2 flex-shrink-0">
+                      {timeAgo(ui.createdAt)}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
               {isLoading &&
                 [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
                   <Card

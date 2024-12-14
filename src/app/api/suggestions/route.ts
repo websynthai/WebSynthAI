@@ -1,26 +1,26 @@
-import { generateText, tool } from "ai";
-import { z } from "zod";
-import { llm } from "@/lib/llm";
+import { llm } from '@/lib/llm';
+import { generateText, tool } from 'ai';
+import { z } from 'zod';
 
 export const maxDuration = 60;
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 const DEFAULT_SUGGESTIONS = [
-  "Login page for netflix",
-  "Product detail card for sneakers",
-  "Ecommerce checkout page",
-  "Dashboard for sales data",
-  "Instagram App UI clone",
+  'Login page for netflix',
+  'Product detail card for sneakers',
+  'Ecommerce checkout page',
+  'Dashboard for sales data',
+  'Instagram App UI clone',
 ];
 
 export async function GET(req: Request): Promise<Response> {
   try {
     const url = new URL(req.url);
-    const modelId = url.searchParams.get("modelId");
+    const modelId = url.searchParams.get('modelId');
 
     if (!modelId) {
       return new Response(JSON.stringify(DEFAULT_SUGGESTIONS), {
-        headers: { "content-type": "application/json" },
+        headers: { 'content-type': 'application/json' },
       });
     }
 
@@ -34,9 +34,13 @@ export async function GET(req: Request): Promise<Response> {
         maxRetries: 1,
         tools: {
           appIdea: tool({
-            description: 'Generate exactly 5 unique and creative UI component ideas',
+            description:
+              'Generate exactly 5 unique and creative UI component ideas',
             parameters: z.object({
-              suggestions: z.array(z.string()).length(5).describe('Exactly 5 unique UI component ideas'),
+              suggestions: z
+                .array(z.string())
+                .length(5)
+                .describe('Exactly 5 unique UI component ideas'),
             }),
             execute: async ({ suggestions: newSuggestions }) => {
               suggestions = newSuggestions;
@@ -61,7 +65,7 @@ Requirements:
 
       if (suggestions.length === 5) {
         return new Response(JSON.stringify(suggestions), {
-          headers: { "content-type": "application/json" },
+          headers: { 'content-type': 'application/json' },
         });
       }
 
@@ -72,30 +76,30 @@ Requirements:
             const parsed = JSON.parse(match[0]);
             if (Array.isArray(parsed) && parsed.length === 5) {
               return new Response(JSON.stringify(parsed), {
-                headers: { "content-type": "application/json" },
+                headers: { 'content-type': 'application/json' },
               });
             }
           } catch {
             // Silently fall through to default suggestions
-            console.warn("Failed to parse AI response as JSON array");
+            console.warn('Failed to parse AI response as JSON array');
           }
         }
       }
     } catch (error) {
-      if (error instanceof Error && error.message.includes("quota")) {
-        console.warn("Quota exceeded, using default suggestions");
+      if (error instanceof Error && error.message.includes('quota')) {
+        console.warn('Quota exceeded, using default suggestions');
       } else {
-        console.error("Error generating suggestions:", error);
+        console.error('Error generating suggestions:', error);
       }
     }
 
     return new Response(JSON.stringify(DEFAULT_SUGGESTIONS), {
-      headers: { "content-type": "application/json" },
+      headers: { 'content-type': 'application/json' },
     });
   } catch (error) {
-    console.error("Error in suggestions API route:", error);
+    console.error('Error in suggestions API route:', error);
     return new Response(JSON.stringify(DEFAULT_SUGGESTIONS), {
-      headers: { "content-type": "application/json" },
+      headers: { 'content-type': 'application/json' },
     });
   }
 }

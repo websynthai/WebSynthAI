@@ -1,22 +1,34 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { GitFork } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface ForkThemeDialogProps {
   theme: {
     id: string;
     name: string;
   };
-  onThemeFork: (themeId: string, themeName: string, themeDescription: string) => void;
+  onThemeFork: (
+    themeId: string,
+    themeName: string,
+    themeDescription: string,
+  ) => void;
 }
 
 export function ForkThemeDialog({ theme, onThemeFork }: ForkThemeDialogProps) {
   const [themeId, setThemeId] = useState(`${theme.id}-fork-${Date.now()}`);
   const [themeName, setThemeName] = useState(`${theme.name} (Fork)`);
-  const [themeDescription, setThemeDescription] = useState(`Forked from ${theme.name}`);
+  const [themeDescription, setThemeDescription] = useState(
+    `Forked from ${theme.name}`,
+  );
   const [open, setOpen] = useState(false);
 
   const handleFork = () => {

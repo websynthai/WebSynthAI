@@ -1,16 +1,16 @@
 // Reference: https://go.microsoft.com/fwlink/?LinkId=827846
 {
-	"recommendations": [
-		"formulahendry.auto-complete-tag",
-		"streetsidesoftware.code-spell-checker",
-		"editorconfig.editorconfig",
-		"dbaeumer.vscode-eslint",
-		"christian-kohler.path-intellisense",
-		"esbenp.prettier-vscode",
-		"burkeholland.simple-react-snippets",
-		"aaron-bond.better-comments",
-		"eamodio.gitlens",
-		"richie5um2.vscode-sort-json",
-		"stylelint.vscode-stylelint"
-	]
+  "recommendations": [
+    "formulahendry.auto-complete-tag",
+    "streetsidesoftware.code-spell-checker",
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint",
+    "christian-kohler.path-intellisense",
+    "esbenp.prettier-vscode",
+    "burkeholland.simple-react-snippets",
+    "aaron-bond.better-comments",
+    "eamodio.gitlens",
+    "richie5um2.vscode-sort-json",
+    "stylelint.vscode-stylelint"
+  ]
 }

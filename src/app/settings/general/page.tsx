@@ -1,28 +1,44 @@
-"use client"
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
-import { Button } from '@/components/ui/button'
-import { InfoIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
+'use client';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { ChevronDownIcon, ChevronUpIcon, InfoIcon } from 'lucide-react';
+import { useState } from 'react';
 
 export default function GeneralSettingsPage() {
-  const [enabled, setEnabled] = useState(true)
-  const [developerMode, setDeveloperMode] = useState(false)
-  const [experimentalFeatures, setExperimentalFeatures] = useState(false)
-  const [advancedSettingsOpen, setAdvancedSettingsOpen] = useState(false)
+  const [developerMode, setDeveloperMode] = useState(false);
+  const [experimentalFeatures, setExperimentalFeatures] = useState(false);
+  const [advancedSettingsOpen, setAdvancedSettingsOpen] = useState(false);
 
   return (
     <div className="space-y-6">
       <Card className="border border-gray-200">
         <CardHeader className="border-b border-gray-200">
-          <CardTitle className="text-xl font-semibold">General Settings</CardTitle>
+          <CardTitle className="text-xl font-semibold">
+            General Settings
+          </CardTitle>
           <CardDescription>description</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 pt-6">
           <div className="flex justify-between items-center">
-            <Label htmlFor="preview-deployments" className="font-medium">Default visibility</Label>
+            <Label htmlFor="preview-deployments" className="font-medium">
+              Default visibility
+            </Label>
             <Select defaultValue="public">
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select" />
@@ -36,11 +52,14 @@ export default function GeneralSettingsPage() {
           <div className="bg-blue-50 p-4 rounded-md flex items-start space-x-2 text-blue-800">
             <InfoIcon className="w-5 h-5 mt-0.5 flex-shrink-0" />
             <p className="text-sm">
-              Under development. This setting will be used as the default visibility for new ui generation.
+              Under development. This setting will be used as the default
+              visibility for new ui generation.
             </p>
           </div>
           <div className="flex justify-between items-center">
-            <Label htmlFor="production-deployments" className="font-medium">Image preview quality</Label>
+            <Label htmlFor="production-deployments" className="font-medium">
+              Image preview quality
+            </Label>
             <Select defaultValue="low">
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select" />
@@ -54,7 +73,9 @@ export default function GeneralSettingsPage() {
           <div className="bg-blue-50 p-4 rounded-md flex items-start space-x-2 text-blue-800">
             <InfoIcon className="w-5 h-5 mt-0.5 flex-shrink-0" />
             <p className="text-sm">
-              Under development. This setting will be used as the default quality for image previews. High quality previews may take longer to generate and sometime makes the tab unresponsive.
+              Under development. This setting will be used as the default
+              quality for image previews. High quality previews may take longer
+              to generate and sometime makes the tab unresponsive.
             </p>
           </div>
           {/* <div className="flex items-center justify-between">
@@ -99,22 +120,30 @@ export default function GeneralSettingsPage() {
       </Card> */}
 
       <Card className="border border-gray-200">
-        <CardHeader 
+        <CardHeader
           className="border-b border-gray-200 cursor-pointer"
           onClick={() => setAdvancedSettingsOpen(!advancedSettingsOpen)}
         >
           <div className="flex justify-between items-center">
-            <CardTitle className="text-xl font-semibold">Advanced Settings (coming soon)</CardTitle>
+            <CardTitle className="text-xl font-semibold">
+              Advanced Settings (coming soon)
+            </CardTitle>
             {advancedSettingsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
           </div>
-          <CardDescription>Configure advanced options for your account.</CardDescription>
+          <CardDescription>
+            Configure advanced options for your account.
+          </CardDescription>
         </CardHeader>
         {advancedSettingsOpen && (
           <CardContent className="space-y-6 pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="developer-mode" className="font-medium">Developer Mode</Label>
-                <p className="text-sm text-gray-500">Enable additional developer features and logs.</p>
+                <Label htmlFor="developer-mode" className="font-medium">
+                  Developer Mode
+                </Label>
+                <p className="text-sm text-gray-500">
+                  Enable additional developer features and logs.
+                </p>
               </div>
               <Switch
                 id="developer-mode"
@@ -124,8 +153,13 @@ export default function GeneralSettingsPage() {
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="experimental-features" className="font-medium">Experimental Features</Label>
-                <p className="text-sm text-gray-500">Try out new experimental features before they&apos;re released.</p>
+                <Label htmlFor="experimental-features" className="font-medium">
+                  Experimental Features
+                </Label>
+                <p className="text-sm text-gray-500">
+                  Try out new experimental features before they&apos;re
+                  released.
+                </p>
               </div>
               <Switch
                 id="experimental-features"
@@ -140,5 +174,5 @@ export default function GeneralSettingsPage() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

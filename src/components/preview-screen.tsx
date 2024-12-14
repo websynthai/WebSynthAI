@@ -1,58 +1,70 @@
-import * as UI from '@/components/ui';
-import React, { ComponentType, ExoticComponent } from 'react';
 import useTheme from '@/hooks/useTheme';
-import * as NextComponents from '@/lib/nextui-components';
 import { NextUIProvider } from '@nextui-org/system';
-import { toast } from 'sonner';
 import ReactLiveContent from './react-live';
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-}
+// interface ErrorBoundaryState {
+//   hasError: boolean;
+// }
 
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-  router: any;
-}
+// interface ErrorBoundaryProps {
+//   children: React.ReactNode;
+//   router: any;
+// }
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: any) {
-    super(props);
-    this.state = { 
-      hasError: false,
-    };
-  }
+// class ErrorBoundary extends React.Component<
+//   ErrorBoundaryProps,
+//   ErrorBoundaryState
+// > {
+//   constructor(props: any) {
+//     super(props);
+//     this.state = {
+//       hasError: false,
+//     };
+//   }
 
-  static getDerivedStateFromError(error: any) {
-    return { hasError: true };
-  }
+//   static getDerivedStateFromError(error: any) {
+//     return { hasError: true };
+//   }
 
-  componentDidCatch(error: any, errorInfo: any) {
-    console.error("Caught an error:", error, errorInfo);
-    toast.error("Error occurred while parsing content. Try using different model")
-    toast.warning("Error occurred while parsing content. Try using different model", {
-      action: {
-        label: 'Change llm',
-        onClick: () => this.props.router.push('/settings/llm')
-      },
-    })
-  }
+//   componentDidCatch(error: any, errorInfo: any) {
+//     console.error('Caught an error:', error, errorInfo);
+//     toast.error(
+//       'Error occurred while parsing content. Try using different model'
+//     );
+//     toast.warning(
+//       'Error occurred while parsing content. Try using different model',
+//       {
+//         action: {
+//           label: 'Change llm',
+//           onClick: () => this.props.router.push('/settings/llm'),
+//         },
+//       }
+//     );
+//   }
 
-  render() {
-    if (this.state.hasError) {
-      return <div className="bg-black text-white p-4">Error occurred while parsing content. Try using different model </div>;
-    }
+//   render() {
+//     if (this.state.hasError) {
+//       return (
+//         <div className="bg-black text-white p-4">
+//           Error occurred while parsing content. Try using different model{' '}
+//         </div>
+//       );
+//     }
 
-    return this.props.children;
-  }
-}
+//     return this.props.children;
+//   }
+// }
 
+// type JsxParserComponents = Record<
+//   string,
+//   ComponentType<any> | ExoticComponent<any>
+// >;
 
-type JsxParserComponents = Record<string, ComponentType<any> | ExoticComponent<any>>;
-
-function castComponents(components: typeof UI | typeof NextComponents): JsxParserComponents {
-  return components as unknown as JsxParserComponents;
-}
+// function castComponents(
+//   components: typeof UI | typeof NextComponents,
+// ): JsxParserComponents {
+//   return components as unknown as JsxParserComponents;
+// }
 
 // const ParsedContent = ({ html_code, theme, uiType }: { html_code: string, theme: string, uiType: string }) => {
 //   const [parsedJsx, setParsedJsx] = useState<React.ReactNode>(null);
@@ -80,7 +92,7 @@ function castComponents(components: typeof UI | typeof NextComponents): JsxParse
 //           components={uiType === "shadcn-react" ? castComponents(UI) : castComponents(NextComponents)}
 //           jsx={html_code}
 //           onError={(e) => {
-//             console.error("Error in JsxParser:", e)            
+//             console.error("Error in JsxParser:", e)
 //             setRenderError(e)
 //           }}
 //         />
@@ -109,7 +121,13 @@ function castComponents(components: typeof UI | typeof NextComponents): JsxParse
 //   );
 // };
 
-const PreviewScreen = ({ html_code, uiType }: { html_code: string, uiType: string }) => {
+const PreviewScreen = ({
+  html_code,
+  uiType,
+}: {
+  html_code: string;
+  uiType: string;
+}) => {
   const { theme } = useTheme();
   // const iframeRef = useRef<HTMLIFrameElement>(null);
   // const isInitializedRef = useRef(false);

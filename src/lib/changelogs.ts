@@ -1,13 +1,13 @@
-export type ChangeType = 'feature' | 'improvement' | 'bugfix' | 'other'
+export type ChangeType = 'feature' | 'improvement' | 'bugfix' | 'other';
 
 export interface Change {
-    type: ChangeType
-    description: string
+  type: ChangeType;
+  description: string;
 }
 
 export interface Version {
-    date: string
-    changes: Change[]
+  date: string;
+  changes: Change[];
 }
 
 export const commitChanges: Version[] = [];

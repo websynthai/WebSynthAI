@@ -1,30 +1,44 @@
-"use client"
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { PlusCircle } from 'lucide-react';
+'use client';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { themes as defaultThemes } from '@/lib/themes';
+import { PlusCircle } from 'lucide-react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 interface NewThemeDialogProps {
-  onThemeCreate: (themeId: string, themeName: string, description: string) => void;
+  onThemeCreate: (
+    themeId: string,
+    themeName: string,
+    description: string,
+  ) => void;
 }
 
 export function NewThemeDialog({ onThemeCreate }: NewThemeDialogProps) {
   const [themeId, setThemeId] = useState('');
   const [themeName, setThemeName] = useState('');
-  const [themeDescription, setThemeDescription] = useState("Custom theme")
+  const [themeDescription, setThemeDescription] = useState('Custom theme');
   const [open, setOpen] = useState(false);
 
   const handleCreate = () => {
-    if(!themeId || !themeName) {
-        toast.error('Please enter a Theme ID and Theme Name.');
-        return;
+    if (!themeId || !themeName) {
+      toast.error('Please enter a Theme ID and Theme Name.');
+      return;
     }
-    const customThemes = JSON.parse(localStorage.getItem('customThemes') || '[]');
-    const themeExists = [...defaultThemes, ...customThemes].some(theme => theme.id.toLowerCase() === themeId.toLowerCase());
+    const customThemes = JSON.parse(
+      localStorage.getItem('customThemes') || '[]',
+    );
+    const themeExists = [...defaultThemes, ...customThemes].some(
+      (theme) => theme.id.toLowerCase() === themeId.toLowerCase(),
+    );
 
     if (themeExists) {
       toast.error('Theme ID already exists. Please choose a different ID.');

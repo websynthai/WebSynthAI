@@ -1,51 +1,62 @@
-'use client'
-import { Github, LoaderCircle } from 'lucide-react'
-import { useAuthModal } from "@/hooks/useAuthModal";
-import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Input, Label } from "./ui"
-import { useState } from 'react';
+'use client';
 import { signInGithub } from '@/actions/auth/sign-in';
+import { useAuthModal } from '@/hooks/useAuthModal';
+import { Github, LoaderCircle } from 'lucide-react';
+import { useState } from 'react';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Input,
+  Label,
+} from './ui';
 
 const AuthModal = () => {
-    const { isOpen, toggle } = useAuthModal();
-    const [loading, setLoading] = useState(false)
+  const { isOpen, toggle } = useAuthModal();
+  const [loading, setLoading] = useState(false);
 
-    const handleSignIn = async () => {
-        setLoading(true)
-        await signInGithub()
-    }
+  const handleSignIn = async () => {
+    setLoading(true);
+    await signInGithub();
+  };
 
-    return (
-        <div>
-            <Dialog open={isOpen} onOpenChange={toggle}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Sign in to v0.diy</DialogTitle>
-                        <DialogDescription>
-                            Welcome back! Please sign in to continue
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="py-4">
-                            <Button
-                                className='w-full py-6'
-                                variant="default"
-                                type="submit"
-                                onClick={()=>handleSignIn()}
-                                disabled={loading}
-                            >
-                                {loading ? (
-                                    <LoaderCircle className="size-4 animate-spin" />
-                                ) : (
-                                    <>
-                                        <Github className="mr-2 size-4" />
-                                        GitHub
-                                    </>
-                                )}
-                            </Button>
-                    </div>
-                </DialogContent>
-            </Dialog>
-        </div>
-    )
-}
+  return (
+    <div>
+      <Dialog open={isOpen} onOpenChange={toggle}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Sign in to v0.diy</DialogTitle>
+            <DialogDescription>
+              Welcome back! Please sign in to continue
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Button
+              className="w-full py-6"
+              variant="default"
+              type="submit"
+              onClick={() => handleSignIn()}
+              disabled={loading}
+            >
+              {loading ? (
+                <LoaderCircle className="size-4 animate-spin" />
+              ) : (
+                <>
+                  <Github className="mr-2 size-4" />
+                  GitHub
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
 
-export default AuthModal
+export default AuthModal;

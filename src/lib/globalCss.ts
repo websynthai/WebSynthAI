@@ -1,11 +1,11 @@
-import { Theme } from "./themes";
+import type { Theme } from './themes';
 
 export const getCss = (theme: Theme): string => {
-    const cssVariables = Object.entries(theme.colors)
-      .map(([key, value]) => `--${key}: ${value};`)
-      .join('\n  ');
-  
-    return `
+  const cssVariables = Object.entries(theme.colors)
+    .map(([key, value]) => `--${key}: ${value};`)
+    .join('\n  ');
+
+  return `
     @tailwind base;
     @tailwind components;
     @tailwind utilities;
@@ -28,11 +28,10 @@ export const getCss = (theme: Theme): string => {
       }
     }
     `;
-}
-
+};
 
 export const generateCSSConfig = () => {
-    return `
+  return `
     .bg-border {
         background-color: hsl(var(--border));
       }
@@ -157,4 +156,4 @@ export const generateCSSConfig = () => {
         border-radius: calc(var(--radius) - 4px);
       }
     `;
-}  
+};
