@@ -88,7 +88,7 @@ This project leverages the [Vercel AI SDK](https://sdk.vercel.ai/providers/ai-sd
 
 ## 📚 Tech Stack
 
-- **Framework**: Next.js 14
+- **Framework**: Next.js 15
 - **Styling**: Tailwind CSS
 - **UI Components**: shadcn/ui, NextUI
 - **Database**: PostgreSQL with Prisma
@@ -134,3 +134,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Vercel](https://vercel.com) for the AI SDK
 - [shadcn/ui](https://ui.shadcn.com) for UI components
 - [NextUI](https://nextui.org) for additional components
+- 
