@@ -1,89 +1,120 @@
-'use server'
+"use server";
 
 import { db } from "@/lib/db";
+import { z } from "zod";
+import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client";
 
-export const createSubPrompt = async (subPrompt: string, UIId: string, parentSUBId: string, code: string, modelId: string) => {    
-    if(subPrompt.startsWith("precise-") || subPrompt.startsWith("balanced-") || subPrompt.startsWith("creative-")) {     
-           
-        const codeData = await db.code.create({
+const SubPromptInput = z.object({
+  subPrompt: z.string().min(1),
+  UIId: z.string().min(1),
+  parentSUBId: z.string().min(1),
+  code: z.string().min(1),
+  modelId: z.string().min(1)
+});
+
+const log = (message: string, data?: any) => {
+  process.stdout.write(`[INFO] ${message}${data ? `: ${JSON.stringify(data, null, 2)}` : ''}\n`);
+};
+
+export const createSubPrompt = async (
+  subPrompt: string,
+  UIId: string,
+  parentSUBId: string,
+  code: string,
+  modelId: string
+) => {
+  try {
+    // 1. Validate input
+    const input = SubPromptInput.parse({ subPrompt, UIId, parentSUBId, code, modelId });
+    log('Input validated');
+
+    // 2. Find next available SUBId
+    const existingSubPrompts = await db.subPrompt.findMany({
+      where: {
+        UIId: input.UIId,
+        SUBId: {
+          startsWith: input.parentSUBId
+        }
+      },
+      orderBy: {
+        SUBId: 'desc'
+      }
+    });
+
+    const finalSUBId = existingSubPrompts.length === 0 
+      ? input.parentSUBId 
+      : `${input.parentSUBId}-${existingSubPrompts.length}`;
+
+    log('Generated SUBId', finalSUBId);
+
+    // 3. Create everything in a single transaction
+    const result = await db.$transaction(async (tx) => {
+      // Create code first
+      const codeEntry = await tx.code.create({
+        data: { code: input.code }
+      });
+      log('Code created', { id: codeEntry.id });
+
+      // Create subPrompt
+      const subPrompt = await tx.subPrompt.create({
+        data: {
+          UIId: input.UIId,
+          subPrompt: input.subPrompt,
+          SUBId: finalSUBId,
+          codeId: codeEntry.id,
+          modelId: input.modelId,
+        }
+      });
+      log('SubPrompt created', { id: subPrompt.id });
+
+      // Update UI timestamp
+      await tx.uI.update({
+        where: { id: input.UIId },
+        data: { updatedAt: new Date() }
+      });
+
+      return { data: subPrompt, codeData: codeEntry };
+    });
+
+    revalidatePath(`/ui/${UIId}`);
+    return result;
+
+  } catch (error) {
+    // If it's a unique constraint violation, retry with a timestamp
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      try {
+        const timestamp = Date.now();
+        const result = await db.$transaction(async (tx) => {
+          const codeEntry = await tx.code.create({
+            data: { code }
+          });
+
+          const sP = await tx.subPrompt.create({
             data: {
-                code: code
+              UIId,
+              subPrompt,
+              SUBId: `${parentSUBId}-${timestamp}`,
+              codeId: codeEntry.id,
+              modelId,
             }
-        });
-        
-        const data = await db.subPrompt.create({
-            data: {
-                UIId: UIId,
-                subPrompt: subPrompt,
-                SUBId: parentSUBId,
-                codeId: codeData.id,
-                modelId: modelId
-            },
+          });
+
+          await tx.uI.update({
+            where: { id: UIId },
+            data: { updatedAt: new Date() }
+          });
+
+          return { data: sP, codeData: codeEntry };
         });
 
-        return {
-            data,
-            codeData
-        };
+        revalidatePath(`/ui/${UIId}`);
+        return result;
+      } catch (retryError) {
+        throw new Error('Failed to create subPrompt after retry');
+      }
     }
 
-    const baseSubId = parentSUBId.split('-').slice(0, -1).join('-'); 
-    const currentNumber = parseInt(parentSUBId.split('-').pop()!, 10);
-    const nextSubIdBase = `${baseSubId}-${currentNumber + 1}`;
-
-    const existingNextSub = await db.subPrompt.findFirst({
-        where: {
-            UIId: UIId,
-            SUBId: nextSubIdBase
-        }
-    });
-
-    let newSUBId: string;
-    if (!existingNextSub) {
-        newSUBId = nextSubIdBase;
-    } else {
-        const existingSubPrompts = await db.subPrompt.findMany({
-            where: {
-                UIId: UIId,
-                SUBId: {
-                    startsWith: `${nextSubIdBase}-`
-                }
-            },
-            orderBy: {
-                SUBId: 'desc'
-            },
-            take: 1
-        });
-
-        if (existingSubPrompts.length === 0) {
-            newSUBId = `${nextSubIdBase}-1`;
-        } else {
-            const lastSUBId = existingSubPrompts[0].SUBId;
-            const parts = lastSUBId.split('-');
-            const lastNumber = parseInt(parts[parts.length - 1], 10);
-            parts[parts.length - 1] = (lastNumber + 1).toString();
-            newSUBId = parts.join('-');
-        }
-    }
-
-    const codeData = await db.code.create({
-        data: {
-            code: code
-        },
-    });
-
-    const data = await db.subPrompt.create({
-        data: {
-            UIId: UIId,
-            subPrompt: subPrompt,
-            SUBId: newSUBId,
-            codeId: codeData.id,
-            modelId: modelId
-        },
-    });
-
-    return {
-        data,
-        codeData
-    };
-}
+    throw error;
+  }
+};

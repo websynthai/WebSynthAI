@@ -32,25 +32,38 @@ export async function POST(req: Request): Promise<Response> {
       ],
     });
 
-    const { text } = result;
-    
-    //TODO revert 'fixed' to 'absolute' after fixing the bug in iframe
-    const code = trimCode(text.replace(/```/g, '').replace(/typescript|javascript|jsx|tsx|ts|js/g, '').replace("asChild"," ").replace("fixed","absolute").trim()); 
-
-    return new Response(JSON.stringify(code), {
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
-  } catch (error) {
-    console.error('Error in API route:', error);
-    if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify({ error: 'Invalid input', details: error.errors }), {
-        status: 400,
+    if (!result?.text) {
+      return new Response(JSON.stringify({ error: 'No response from model' }), {
+        status: 500,
         headers: { 'content-type': 'application/json' },
       });
     }
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+
+    const code = trimCode(result.text
+      .replace(/```/g, '')
+      .replace(/typescript|javascript|jsx|tsx|ts|js/g, '')
+      .replace("asChild"," ")
+      .replace("fixed","absolute")
+      .trim()
+    );
+
+    if (!code) {
+      return new Response(JSON.stringify({ error: 'Empty code generated' }), {
+        status: 500,
+        headers: { 'content-type': 'application/json' },
+      });
+    }
+
+    return new Response(JSON.stringify({ code, success: true }), {
+      headers: { 'content-type': 'application/json' },
+    });
+
+  } catch (error) {
+    console.error('API Error:', error);
+    return new Response(JSON.stringify({ 
+      error: error instanceof Error ? error.message : 'Unknown error',
+      success: false 
+    }), {
       status: 500,
       headers: { 'content-type': 'application/json' },
     });
