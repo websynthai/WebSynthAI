@@ -1,11 +1,9 @@
 import * as UI from '@/components/ui';
-import JsxParser from 'react-jsx-parser'
-import React, { ComponentType, ExoticComponent, useEffect, useRef, useState } from 'react';
+import React, { ComponentType, ExoticComponent } from 'react';
 import useTheme from '@/hooks/useTheme';
 import * as NextComponents from '@/lib/nextui-components';
 import { NextUIProvider } from '@nextui-org/system';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 import ReactLiveContent from './react-live';
 
 interface ErrorBoundaryState {
@@ -56,65 +54,65 @@ function castComponents(components: typeof UI | typeof NextComponents): JsxParse
   return components as unknown as JsxParserComponents;
 }
 
-const ParsedContent = ({ html_code, theme, uiType }: { html_code: string, theme: string, uiType: string }) => {
-  const [parsedJsx, setParsedJsx] = useState<React.ReactNode>(null);
-  const [renderError, setRenderError] = useState<Error | null>(null)
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const router = useRouter();
+// const ParsedContent = ({ html_code, theme, uiType }: { html_code: string, theme: string, uiType: string }) => {
+//   const [parsedJsx, setParsedJsx] = useState<React.ReactNode>(null);
+//   const [renderError, setRenderError] = useState<Error | null>(null)
+//   const [isFullScreen, setIsFullScreen] = useState(false);
+//   const router = useRouter();
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        setIsFullScreen(prev => !prev);
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+//   useEffect(() => {
+//     const handleKeyDown = (e: KeyboardEvent) => {
+//       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+//         e.preventDefault();
+//         setIsFullScreen(prev => !prev);
+//       }
+//     };
+//     document.addEventListener('keydown', handleKeyDown);
+//     return () => {
+//       document.removeEventListener('keydown', handleKeyDown);
+//     };
+//   }, []);
 
-  useEffect(() => {
-    try {
-      setParsedJsx(
-        <JsxParser
-          components={uiType === "shadcn-react" ? castComponents(UI) : castComponents(NextComponents)}
-          jsx={html_code}
-          onError={(e) => {
-            console.error("Error in JsxParser:", e)            
-            setRenderError(e)
-          }}
-        />
-      );
-    } catch (err) {
-      console.error("Error in ParsedContent:", err);
-    }
-    return () => {
-      setParsedJsx(null);
-      setRenderError(null);
-    }
-  }, [html_code, uiType]);
+//   useEffect(() => {
+//     try {
+//       setParsedJsx(
+//         <JsxParser
+//           components={uiType === "shadcn-react" ? castComponents(UI) : castComponents(NextComponents)}
+//           jsx={html_code}
+//           onError={(e) => {
+//             console.error("Error in JsxParser:", e)            
+//             setRenderError(e)
+//           }}
+//         />
+//       );
+//     } catch (err) {
+//       console.error("Error in ParsedContent:", err);
+//     }
+//     return () => {
+//       setParsedJsx(null);
+//       setRenderError(null);
+//     }
+//   }, [html_code, uiType]);
 
-  return (
-    <div className={`${isFullScreen ? 'fixed inset-0 z-50 bg-background overflow-y-auto' : ''}`}>
-      <div className={`${theme} relative bg-background`}>
-        <ErrorBoundary router={router}>
-          {
-            renderError ? (
-              <div className="bg-black text-white p-4">Error occurred while rendering content. Try using different model </div>
-            ) : parsedJsx
-          }
-        </ErrorBoundary>
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className={`${isFullScreen ? 'fixed inset-0 z-50 bg-background overflow-y-auto' : ''}`}>
+//       <div className={`${theme} relative bg-background`}>
+//         <ErrorBoundary router={router}>
+//           {
+//             renderError ? (
+//               <div className="bg-black text-white p-4">Error occurred while rendering content. Try using different model </div>
+//             ) : parsedJsx
+//           }
+//         </ErrorBoundary>
+//       </div>
+//     </div>
+//   );
+// };
 
 const PreviewScreen = ({ html_code, uiType }: { html_code: string, uiType: string }) => {
   const { theme } = useTheme();
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const isInitializedRef = useRef(false);
+  // const iframeRef = useRef<HTMLIFrameElement>(null);
+  // const isInitializedRef = useRef(false);
 
   // useEffect(() => {
   //   if (iframeRef.current) {
