@@ -1,6 +1,7 @@
 {
   "name": "v0.diy",
-  "version": "0.1.0",
+  "description": "v0.dev open-source alternative, DIY AI code generator",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
@@ -107,8 +108,8 @@
     "@types/react": "19.0.1",
     "@types/react-dom": "19.0.2",
     "autoprefixer": "10.4.20",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.2.11",
+    "husky": "9.1.7",
+    "lint-staged": "15.2.11",
     "postcss": "8.4.49",
     "prisma": "6.0.1",
     "tailwindcss": "3.4.16",
