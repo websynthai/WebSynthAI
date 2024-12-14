@@ -19,7 +19,7 @@ const AuthModal = () => {
             <Dialog open={isOpen} onOpenChange={toggle}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Sign in to WindAI</DialogTitle>
+                        <DialogTitle>Sign in to v0.diy</DialogTitle>
                         <DialogDescription>
                             Welcome back! Please sign in to continue
                         </DialogDescription>

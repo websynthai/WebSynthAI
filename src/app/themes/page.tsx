@@ -81,7 +81,7 @@ export default function ThemeSelector() {
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
-        <Button onClick={() => router.push("/")} variant={"outline"} className="text-xl font-bold p-1">WindAI</Button>
+        <Button onClick={() => router.push("/")} variant={"outline"} className="text-xl font-bold p-1">v0.diy</Button>
         <h1 className="text-3xl font-bold">Themes</h1>
         <NewThemeDialog onThemeCreate={handleThemeCreate} />
       </div>

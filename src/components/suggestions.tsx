@@ -7,7 +7,6 @@ import { createUI } from "@/actions/ui/create-ui";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useModel } from "@/hooks/useModel";
 
 const Suggestions = () => {
 	const router = useRouter();
@@ -32,20 +31,27 @@ const Suggestions = () => {
 						'Content-Type': 'application/json',
 					},
 				});
+
 				if (!res.ok) {
-					throw new Error('Failed to fetch suggestions');
+					console.error(`HTTP error! status: ${res.status}`);
+					return; // This will keep the default suggestions
 				}
+
 				const data = await res.json();
 
 				if (Array.isArray(data) && data.length > 0) {
 					setSuggestions(data);
+				} else {
+					console.warn('Received invalid data format from API');
 				}
 			} catch (error) {
 				console.error('Error fetching suggestions:', error);
+				// Default suggestions will remain
 			}
-		}
-		fetchSuggestions()
-	}, [])
+		};
+
+		fetchSuggestions();
+	}, []);
 
 	const handleClick = async (suggestion: string) => {
 		setInput(suggestion)
@@ -56,14 +62,25 @@ const Suggestions = () => {
 					return;
 				}
 				setLoading(true)
-				const ui = await createUI(suggestion, userId, uiType);
-				setLoading(false)
-				router.push(`/ui/${ui.id}`);
+				try {
+					const ui = await createUI(suggestion, userId, uiType);
+					if (!ui) {
+						throw new Error("Failed to create UI");
+					}
+					router.push(`/ui/${ui.id}`);
+				} catch (error) {
+					console.error("Error creating UI:", error);
+					toast.error('Failed to create UI: ' + (error instanceof Error ? error.message : 'Unknown error'));
+				} finally {
+					setLoading(false)
+				}
 			} else {
 				toggle()
 			}
 		} catch (error) {
-			toast.error('Failed to create UI');
+			console.error("Error in handleClick:", error);
+			toast.error('An unexpected error occurred');
+			setLoading(false)
 		}
 	}
 

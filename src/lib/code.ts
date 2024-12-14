@@ -1,4 +1,4 @@
-export const embededCode = (htmlCode:string, uiType: string) => {
+export const embeddedCode = (htmlCode:string, uiType: string) => {
     if(uiType === "shadcn-react"){
         return shadcnCode(htmlCode);
     }else if(uiType === "nextui-react"){        

@@ -138,4 +138,4 @@ const modelRegistry = createProviderRegistry({
     ollama: ollama,
 });
 
-export const llm = (model:string) => modelRegistry.languageModel(model);
+export const llm = (modelId: string) => modelRegistry.languageModel(modelId);

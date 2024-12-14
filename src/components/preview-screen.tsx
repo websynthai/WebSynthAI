@@ -2,9 +2,6 @@ import * as UI from '@/components/ui';
 import JsxParser from 'react-jsx-parser'
 import React, { ComponentType, ExoticComponent, useEffect, useRef, useState } from 'react';
 import useTheme from '@/hooks/useTheme';
-import { createRoot } from 'react-dom/client';
-import { themes } from '../lib/themes';
-import { generateCSSConfig, getCss } from '@/lib/globalCss';
 import * as NextComponents from '@/lib/nextui-components';
 import { NextUIProvider } from '@nextui-org/system';
 import { toast } from 'sonner';

@@ -115,7 +115,7 @@ export default function ThemeCustomizer(props: { params: Promise<{ id: string }>
   return (
     <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-start items-center mb-6">
-        <Button onClick={() => router.push("/")} variant="outline" className="text-xl font-bold p-1">WindAI</Button>
+        <Button onClick={() => router.push("/")} variant="outline" className="text-xl font-bold p-1">v0.diy</Button>
         <Button onClick={() => router.push("/themes")} variant="secondary" className="ml-2 text-xl font-bold p-1">Themes</Button>
       </div>
       <Card className="w-full max-w-4xl mx-auto shadow-lg rounded-md">

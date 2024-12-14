@@ -7,7 +7,7 @@ export default function MAINTENANCE() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Bot className="w-12 h-12 mx-auto mb-4 text-primary" />
-          <CardTitle className="text-2xl font-bold">WindAI System Upgrade</CardTitle>
+          <CardTitle className="text-2xl font-bold">v0.diy System Upgrade</CardTitle>
           <CardDescription>We&apos;re enhancing our AI capabilities to serve you better.</CardDescription>
         </CardHeader>
         <CardContent className="text-center">
