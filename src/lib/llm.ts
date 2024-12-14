@@ -120,7 +120,12 @@ const anthropicVertex = createAnthropicVertex({
 
 const modelRegistry = createProviderRegistry({
   anthropic: anthropic,
-  anthropicVertex: anthropicVertex,
+  anthropicVertex: {
+    ...anthropicVertex,
+    textEmbeddingModel: () => {
+      throw new Error('Text embeddings not supported for Anthropic Vertex');
+    },
+  },
   openai: openai,
   azure: azure,
   bedrock: bedrock,
