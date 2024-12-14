@@ -169,7 +169,7 @@ const UI = (props: { params: Promise<any> }) => {
             loading: true,
           },
         }));
-        preciseCode = await getCode(subPrompt[0].codeId, i, 0);
+        preciseCode = (await getCode(subPrompt[0].codeId, i, 0)) || '';
       }
       setUiState({
         precise: {
