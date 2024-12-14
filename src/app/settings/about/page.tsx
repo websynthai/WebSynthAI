@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'About | Settings',
-  description: 'Information about the application and company.',
+  description: 'Information about the application and company.'
 }
 
 export default function AboutPage() {

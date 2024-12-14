@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "v0.diy",
-    description: "Generate code using shadcn/nextui/tailwindcss",
+    description: "Generate code using shadcn/nextui/tailwindcss"
 };
 
 export default function RootLayout({
