@@ -185,6 +185,10 @@ const openaiModels:Model[] = [
     {
         modelId: 'google:gemma-2-27b-it',
         model: 'gemma-2-27b-it',
+    },
+    {
+        modelId: 'google:gemini-2.0-flash-exp',
+        model: 'gemini-2.0-flash-exp',
     }
  ];
 
