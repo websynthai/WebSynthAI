@@ -87,9 +87,10 @@ const PromptInput = () => {
         transition-all duration-200
         hover:shadow-lg hover:bg-background/80
         dark:bg-background/20 dark:hover:bg-background/30
-        dark:shadow-lg dark:shadow-primary/5"
+        dark:shadow-lg dark:shadow-primary/5
+        relative h-[150px]"
       >
-        <div className="relative">
+        <div className="h-full">
           <AnimatePresence>
             {selectedImage && (
               <motion.div
@@ -153,21 +154,23 @@ const PromptInput = () => {
             )}
           </AnimatePresence>
 
-          <Textarea
-            value={input}
-            placeholder="Describe your UI component..."
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyPress}
-            className="w-full px-4 py-3
-              text-foreground placeholder:text-muted-foreground
-              outline-none focus:ring-0
-              resize-none min-h-[140px] rounded-none border-none border-0
-              focus-visible:ring-0
-              transition-colors duration-200
-              hover:bg-muted/50"
-            autoFocus
-            spellCheck={false}
-          />
+          <div className="absolute inset-0 bottom-[52px] overflow-auto">
+            <Textarea
+              value={input}
+              placeholder="Describe your UI component..."
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              className="w-full px-4 py-3
+                text-foreground placeholder:text-muted-foreground
+                outline-none focus:ring-0
+                resize-none min-h-full rounded-none border-none border-0
+                focus-visible:ring-0
+                transition-colors duration-200
+                hover:bg-muted/50"
+              autoFocus
+              spellCheck={false}
+            />
+          </div>
 
           <div
             className="absolute bottom-0 left-0 right-0
