@@ -83,11 +83,8 @@ const PromptInput = () => {
       <Card
         className="w-full bg-background/50 backdrop-blur-sm shadow-md
         overflow-hidden border-0
-        ring-2 ring-primary/20
+        ring-2 ring-border/50
         transition-all duration-200
-        hover:shadow-lg hover:bg-background/80
-        dark:bg-background/20 dark:hover:bg-background/30
-        dark:shadow-lg dark:shadow-primary/5
         relative"
       >
         <div className="flex flex-col">
@@ -167,7 +164,7 @@ const PromptInput = () => {
                   resize-none min-h-full rounded-none border-none border-0
                   focus-visible:ring-0
                   transition-colors duration-200
-                  hover:bg-muted/50"
+                  "
                 autoFocus
                 spellCheck={false}
               />
