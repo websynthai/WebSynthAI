@@ -1,5 +1,7 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   type Change,
@@ -8,7 +10,7 @@ import {
   commitChanges,
 } from '@/lib/changelogs';
 import { motion } from 'framer-motion';
-import { Book, Bug, InfoIcon, Star, Zap } from 'lucide-react';
+import { Book, Bug, GitCommit, InfoIcon, Star, Zap } from 'lucide-react';
 import { useEffect } from 'react';
 
 const ChangelogCards = ({ commitChanges }: { commitChanges: Version[] }) => {
@@ -26,23 +28,29 @@ const ChangelogCards = ({ commitChanges }: { commitChanges: Version[] }) => {
   };
 
   const getIcon = (type: ChangeType) => {
+    const iconClass = 'h-4 w-4 mr-2 flex-shrink-0';
     switch (type) {
       case 'feature':
-        return (
-          <Star className="h-5 w-5 mr-2 flex-shrink-0 text-gray-500 dark:text-gray-400" />
-        );
+        return <Star className={`${iconClass} text-yellow-500`} />;
       case 'improvement':
-        return (
-          <Zap className="h-5 w-5 mr-2 flex-shrink-0 text-gray-500 dark:text-gray-400" />
-        );
+        return <Zap className={`${iconClass} text-blue-500`} />;
       case 'bugfix':
-        return (
-          <Bug className="h-5 w-5 mr-2 flex-shrink-0 text-gray-500 dark:text-gray-400" />
-        );
+        return <Bug className={`${iconClass} text-red-500`} />;
       case 'other':
-        return (
-          <Book className="h-5 w-5 mr-2 flex-shrink-0 text-gray-500 dark:text-gray-400" />
-        );
+        return <Book className={`${iconClass} text-purple-500`} />;
+    }
+  };
+
+  const getBadgeColor = (type: ChangeType) => {
+    switch (type) {
+      case 'feature':
+        return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+      case 'improvement':
+        return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'bugfix':
+        return 'bg-red-50 text-red-700 border-red-200';
+      case 'other':
+        return 'bg-purple-50 text-purple-700 border-purple-200';
     }
   };
 
@@ -52,49 +60,63 @@ const ChangelogCards = ({ commitChanges }: { commitChanges: Version[] }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="mb-12 relative"
+      className="mb-8 relative pl-8"
     >
-      <div className="absolute left-0 top-0 bottom-0 w-px bg-gray-300 dark:bg-gray-700" />
-      <div className="pl-8">
+      <div className="absolute left-0 top-0 bottom-0 w-px bg-border" />
+      <div className="relative">
         <div className="flex items-center mb-4">
-          <div className="w-6 h-6 rounded-full bg-gray-400 dark:bg-gray-600 absolute -left-3" />
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200">
-            {/* Version {release.version} */}
-          </h2>
-          <div className="ml-4 px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm font-medium">
-            {release.date}
+          <div className="absolute -left-[2.25rem] w-5 h-5 rounded-full bg-primary/20 border-4 border-background flex items-center justify-center">
+            <GitCommit className="h-3 w-3 text-primary" />
+          </div>
+          <div className="flex items-center space-x-3">
+            <h2 className="text-xl font-semibold text-foreground">
+              Version {release.version}
+            </h2>
+            <Badge variant="secondary" className="text-xs font-mono">
+              {release.date}
+            </Badge>
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
-          {Object.entries(groupChangesByType(release.changes)).map(
-            ([type, descriptions], typeIndex) => (
-              <div key={typeIndex} className="mb-4 last:mb-0">
-                <h3 className="text-xl font-semibold mb-2 text-gray-700 dark:text-gray-300 capitalize">
-                  {type === 'bugfix' ? 'Bug Fixes' : `${type}s`}
-                </h3>
-                <ul className="space-y-2">
-                  {descriptions.map((description, descIndex) => (
-                    <motion.li
-                      key={descIndex}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        duration: 0.3,
-                        delay: typeIndex * 0.1 + descIndex * 0.05,
-                      }}
-                      className="flex items-center"
+
+        <Card className="bg-card shadow-sm border border-border transition-all duration-200 hover:shadow-md">
+          <div className="p-6 space-y-6">
+            {Object.entries(groupChangesByType(release.changes)).map(
+              ([type, descriptions], typeIndex) => (
+                <div key={typeIndex}>
+                  <div className="flex items-center space-x-2 mb-3">
+                    {getIcon(type as ChangeType)}
+                    <h3
+                      className={`text-sm font-semibold capitalize ${getBadgeColor(
+                        type as ChangeType,
+                      )}`}
                     >
-                      {getIcon(type as ChangeType)}
-                      <span className="text-gray-600 dark:text-gray-400">
-                        {description}
-                      </span>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-            ),
-          )}
-        </div>
+                      {type === 'bugfix' ? 'Bug Fixes' : `${type}s`}
+                    </h3>
+                  </div>
+                  <ul className="space-y-3 ml-6">
+                    {descriptions.map((description, descIndex) => (
+                      <motion.li
+                        key={descIndex}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                          duration: 0.3,
+                          delay: typeIndex * 0.1 + descIndex * 0.05,
+                        }}
+                        className="relative"
+                      >
+                        <div className="absolute -left-6 top-1.5 w-2 h-2 rounded-full bg-muted-foreground/20" />
+                        <span className="text-sm text-muted-foreground">
+                          {description}
+                        </span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              ),
+            )}
+          </div>
+        </Card>
       </div>
     </motion.div>
   ));
@@ -106,25 +128,35 @@ export default function Changelog() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <div className="pt-10">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-3xl mx-auto pb-5"
-        >
-          <ScrollArea className="h-[calc(100vh-12rem)] pr-4">
-            <div className="bg-yellow-50 p-2 rounded-md flex items-center space-x-2 text-yellow-800 my-5">
-              <InfoIcon className="w-5 h-5 mt-0.5 flex-shrink-0" />
-              <p className="text-sm">
-                Changelogs below are generated by ai using commit messages from
-                the repository.
+    <div className="container mx-auto p-6">
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold text-foreground">Changelog</h1>
+          <p className="text-sm text-muted-foreground">
+            Track all the updates and improvements to our platform
+          </p>
+        </div>
+
+        <Card className="border-l-4 border-l-yellow-500 bg-card shadow-sm">
+          <div className="p-4 flex items-start space-x-3">
+            <InfoIcon className="w-5 h-5 text-yellow-500 mt-0.5" />
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-foreground">
+                AI-Generated Changelogs
+              </p>
+              <p className="text-sm text-muted-foreground">
+                These changelogs are automatically generated using AI analysis
+                of repository commit messages.
               </p>
             </div>
+          </div>
+        </Card>
+
+        <ScrollArea className="h-[calc(100vh-12rem)]">
+          <div className="pr-4">
             <ChangelogCards commitChanges={commitChanges} />
-          </ScrollArea>
-        </motion.div>
+          </div>
+        </ScrollArea>
       </div>
     </div>
   );

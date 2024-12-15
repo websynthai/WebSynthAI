@@ -6,6 +6,7 @@ export interface Change {
 }
 
 export interface Version {
+  version: string;
   date: string;
   changes: Change[];
 }
