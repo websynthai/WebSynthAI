@@ -16,7 +16,7 @@ import { motion } from 'framer-motion';
 import { Eye, Heart } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import PromptBadge from './prompt-badge';
 
 interface User {
@@ -137,9 +137,9 @@ const UICard = ({ ui, onClick }: { ui: UI; onClick: () => void }) => {
 
 const HomeUICards = () => {
   const router = useRouter();
-  const [uis, setUis] = React.useState<UI[]>([]);
+  const [uis, setUis] = useState<UI[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchUIs = async () => {
       const fetchedUIs = await getUIHome();
       setUis(fetchedUIs);
@@ -148,15 +148,24 @@ const HomeUICards = () => {
     fetchUIs();
   }, []);
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
+  const container = useMemo(() => {
+    return {
+      hidden: { opacity: 0 },
+      show: {
+        opacity: 1,
+        transition: {
+          staggerChildren: 0.1,
+        },
       },
+    };
+  }, []);
+
+  const handleCardClick = useCallback(
+    (ui: UI) => {
+      return () => router.push(`ui/${ui.id}`);
     },
-  };
+    [router],
+  );
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -167,11 +176,7 @@ const HomeUICards = () => {
         className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3"
       >
         {uis.map((ui) => (
-          <UICard
-            key={ui.id}
-            ui={ui}
-            onClick={() => router.push(`ui/${ui.id}`)}
-          />
+          <UICard key={ui.id} ui={ui} onClick={handleCardClick(ui)} />
         ))}
       </motion.div>
     </div>
