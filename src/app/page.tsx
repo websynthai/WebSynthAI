@@ -1,18 +1,18 @@
 'use client';
+
 import { createUI } from '@/actions/ui/create-ui';
 import Header from '@/components/header';
 import HomeUICards from '@/components/home-uis';
 import Suggestions from '@/components/suggestions';
 import {
-  Badge,
   Button,
   Card,
-  Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Textarea,
 } from '@/components/ui';
 import { useAuthModal } from '@/hooks/useAuthModal';
 import { useModel } from '@/hooks/useModel';
@@ -23,6 +23,7 @@ import {
   LoaderCircle,
   Lock,
   SendHorizontal,
+  Settings2,
   X,
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -112,147 +113,157 @@ export default function Home() {
     }
   }, [setDescriptiveModel, setImageModel, setInitialModel, setModifierModel]);
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      generateUI();
+    }
+  };
+
   return (
     <div>
       <Header />
       <div className="flex items-center justify-center mt-16">
-        <div className="w-full max-w-lg h-auto items-center flex flex-col space-y-6">
-          <p className="font-bold text-5xl">Generate. Ship. Done.</p>
-          <p>Generate UI with shadcn/nextui from text prompts or images.</p>
-          <Card className="flex flex-col w-full space-x-2 bg-black items-center ">
-            <div className="flex w-full space-x-2 items-center">
-              <Input
-                type="text"
+        <div className="w-full max-w-2xl h-auto items-center flex flex-col space-y-6">
+          <p className="font-bold text-5xl bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 animate-gradient bg-[length:200%_auto] bg-clip-text text-transparent">
+            Think. Build. Ship.
+          </p>
+          <p className="text-center text-gray-600 dark:text-gray-300">
+            🪄 Magically convert prompts into polished UI components using
+            shadcn & NextUI
+          </p>
+          <Card
+            className="w-full bg-background/50 backdrop-blur-sm border shadow-md
+            overflow-hidden border-0
+            ring-2 ring-primary/20
+            transition-all duration-200
+            hover:shadow-lg hover:bg-background/80
+            dark:bg-background/20 dark:hover:bg-background/30
+            dark:shadow-lg dark:shadow-primary/5"
+          >
+            <div className="relative">
+              <Textarea
                 value={input}
-                placeholder="Type a message..."
+                placeholder="Describe your UI component... (Press Enter to submit, Shift + Enter for new line)"
                 onChange={(e) => setInput(e.target.value)}
-                className="flex-grow rounded-full bg-black px-6 py-4 text-sm text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 border-0 focus-visible:border-0 focus:ring-gray-600"
+                onKeyDown={handleKeyPress}
+                className="w-full px-4 py-3
+                  text-foreground placeholder:text-muted-foreground
+                  outline-none focus:ring-0
+                  resize-none min-h-[140px] rounded-none border-none border-0
+                  focus-visible:ring-0
+                  transition-colors duration-200
+                  hover:bg-muted/50"
+                autoFocus
+                spellCheck={false}
               />
-              <Button
-                onClick={() => generateUI()}
-                variant="ghost"
-                size="icon"
-                className="rounded-md w-12 h-12 text-gray-200 bg-black hover:bg-black hover:text-gray-600"
+
+              <div
+                className="absolute bottom-0 left-0 right-0
+                bg-background/80 backdrop-blur-sm border-t
+                transition-all duration-200
+                dark:bg-background/40 dark:border-border/50"
               >
-                {loading ? (
-                  <LoaderCircle className="h-4 w-4 ml-1 animate-spin" />
-                ) : (
-                  <SendHorizontal />
-                )}
-              </Button>
-            </div>
-            <div className="flex w-full space-x-2 items-center pb-2 ps-2">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-                ref={fileInputRef}
-              />
-              <ImageIcon
-                aria-label="Upload image"
-                onClick={() => fileInputRef.current?.click()}
-                className="text-gray-200 bg-black hover:bg-gray-800"
-              />
-              {selectedImage && (
-                <div className="flex items-center justify-between bg-gray-800 rounded-md p-1">
-                  <Image width={20} height={20} src={imageBase64} alt="image" />
-                  <X
-                    onClick={removeImage}
-                    size={20}
-                    className="text-gray-200 hover:text-gray-400 cursor-pointer"
-                  />
+                <div className="p-2 flex items-center gap-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      ref={fileInputRef}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="h-8 px-2 text-muted-foreground hover:text-foreground"
+                    >
+                      <ImageIcon className="h-4 w-4" />
+                    </Button>
+
+                    {selectedImage && (
+                      <div className="flex items-center gap-1 bg-muted/50 rounded-md px-2 py-1">
+                        <Image
+                          width={16}
+                          height={16}
+                          src={imageBase64}
+                          alt="Preview"
+                          className="rounded"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={removeImage}
+                          className="h-4 w-4 p-0 hover:bg-transparent text-muted-foreground"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="h-6 w-px bg-border" />
+
+                  <div className="flex items-center gap-2 flex-1">
+                    <Select onValueChange={setUIType} value={uiType}>
+                      <SelectTrigger className="h-8 w-[110px] border-none bg-transparent">
+                        <SelectValue placeholder="Framework" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="shadcn-react">Shadcn/UI</SelectItem>
+                        <SelectItem value="nextui-react">Next UI</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <Select defaultValue="ionicons">
+                      <SelectTrigger className="h-8 w-[100px] border-none bg-transparent">
+                        <SelectValue placeholder="Icons" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ionicons">Ion Icons</SelectItem>
+                        <SelectItem value="lucidereact" disabled>
+                          <span className="flex items-center gap-2">
+                            Lucide
+                            <Lock className="h-3 w-3" />
+                          </span>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => router.push('/settings/llm')}
+                      className="h-8 px-2 text-muted-foreground hover:text-foreground"
+                    >
+                      <Settings2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <Button onClick={generateUI} size="icon" variant="outline">
+                    {loading ? (
+                      <LoaderCircle className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <SendHorizontal className="h-4 w-4" />
+                    )}
+                  </Button>
                 </div>
-              )}
-              <Select onValueChange={setUIType} value={uiType}>
-                <SelectTrigger className="dark text-white w-min ring-0 focus:ring-0 h-8">
-                  <SelectValue placeholder="Select UI Type" />
-                </SelectTrigger>
-                <SelectContent className="dark w-min">
-                  <SelectItem value="shadcn-react">Shadcn/UI</SelectItem>
-                  <SelectItem value="nextui-react">Next UI</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select defaultValue="ionicons">
-                <SelectTrigger className="dark text-white w-min ring-0 focus:ring-0 h-8">
-                  <SelectValue placeholder="Icons" />
-                </SelectTrigger>
-                <SelectContent className="dark w-min">
-                  <SelectItem value="ionicons">Ion Icons</SelectItem>
-                  <SelectItem
-                    className="whitespace-nowrap"
-                    disabled
-                    value="lucidereact"
-                  >
-                    <div className="flex items-center">
-                      <p className="mr-2">Lucide React</p> <Lock size={14} />
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <Select defaultValue="public">
-                <SelectTrigger className="dark text-white w-min ring-0 focus:ring-0 h-8">
-                  <SelectValue placeholder="visibility" />
-                </SelectTrigger>
-                <SelectContent className="dark w-min">
-                  <SelectItem value="public">Public</SelectItem>
-                  <SelectItem disabled value="lucidereact">
-                    <div className="flex items-center">
-                      <p className="mr-2">private</p> <Lock size={14} />
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <Button
-                variant={'default'}
-                onClick={() => router.push('/settings/llm')}
-                className="w-min focus:ring-0 h-8"
-              >
-                LLM
-              </Button>
+              </div>
             </div>
           </Card>
+
           {selectedImage && (
-            <div className="bg-yellow-50 p-2 rounded-md flex items-start space-x-2 text-yellow-800">
-              <InfoIcon className="w-5 h-5 mt-0.5 flex-shrink-0" />
-              <p className="text-sm">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <InfoIcon className="h-4 w-4" />
+              <p>
                 Image to code is in Beta. It doesn&apos;t support
                 ShadcnUI/NextUI yet.
               </p>
             </div>
           )}
-          {uiType === 'nextui-react' && (
-            <div className="bg-yellow-50 p-2 rounded-md flex items-start space-x-2 text-yellow-800">
-              <InfoIcon className="w-5 h-5 mt-0.5 flex-shrink-0" />
-              <p className="text-sm">
-                NextUI is in Beta. May generate unparsable code thus resulting
-                in error while rendering.
-              </p>
-            </div>
-          )}
+
           <Suggestions />
-          <div className="pt-10">
-            {/* <TipsCarousel /> */}
-            <div className="bg-yellow-50 p-2 rounded-md flex items-start space-x-2 text-yellow-800">
-              <InfoIcon className="w-5 h-5 mt-0.5 flex-shrink-0" />
-              <p className="text-sm">
-                LLMs are subject to rate limits, which can cause some models to
-                fail when attempting to generate UI components. These
-                limitations may result in delayed responses or the inability to
-                complete tasks, especially when multiple users make requests
-                using same models within a short time frame.
-              </p>
-            </div>
-            <div className="flex justify-center mt-3">
-              <Badge
-                onClick={() => router.push('/settings/llm')}
-                variant="default"
-                className="text-sm border-spacing-1 cursor-pointer"
-              >
-                Try different models in the settings for a faster response.
-              </Badge>
-            </div>
-          </div>
         </div>
       </div>
       <HomeUICards />
