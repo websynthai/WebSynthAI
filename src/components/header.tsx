@@ -1,10 +1,9 @@
 'use client';
+
 import { Button } from '@/components/ui/button';
 import UserButton from '@/components/user-button';
-import { useAuthModal } from '@/hooks/useAuthModal';
 import { cn } from '@/lib/utils';
-import { CompassIcon, FileClockIcon, Github } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { CompassIcon, FileClockIcon, GithubIcon } from 'lucide-react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -22,12 +21,8 @@ const NAVIGATION_ITEMS = [
 ] as const;
 
 const Header = () => {
-  const { toggle: toggleAuth } = useAuthModal();
-  const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const isAuthenticated = status === 'authenticated';
-  const isUnauthenticated = status === 'unauthenticated';
 
   return (
     <header
@@ -52,14 +47,8 @@ const Header = () => {
                 alt="v0.diy Logo"
                 width={24}
                 height={24}
-                className={cn(
-                  'rounded-sm transition-transform duration-200',
-                  'group-hover:scale-110',
-                )}
+                className="rounded-sm transition-transform duration-200"
               />
-              {isAuthenticated && (
-                <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-green-500" />
-              )}
             </div>
             <span className="hidden bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent sm:inline">
               v0.diy
@@ -93,33 +82,16 @@ const Header = () => {
               window.open('https://github.com/SujalXplores/v0.diy')
             }
             variant="outline"
+            size="icon"
             className={cn(
-              'hidden items-center transition-all hover:scale-105',
+              'hidden items-center transition-all',
               'hover:bg-gray-50 hover:text-primary sm:flex',
             )}
           >
-            <Github className="h-5 w-5" />
-            <span className="ml-2">GitHub</span>
+            <GithubIcon />
           </Button>
 
-          {isUnauthenticated ? (
-            <Button
-              onClick={toggleAuth}
-              variant="default"
-              className={cn(
-                'font-medium transition-all hover:scale-105',
-                'bg-gradient-to-r from-primary to-primary/80',
-              )}
-            >
-              Sign In
-            </Button>
-          ) : null}
-
-          {status === 'loading' ? (
-            <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />
-          ) : isAuthenticated && session?.user ? (
-            <UserButton user={session.user} />
-          ) : null}
+          <UserButton />
         </div>
       </nav>
     </header>

@@ -16,7 +16,7 @@ import { motion } from 'framer-motion';
 import { Eye, Heart } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PromptBadge from './prompt-badge';
 
 interface User {
@@ -82,10 +82,9 @@ const UICard = ({ ui, onClick }: { ui: UI; onClick: () => void }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      whileHover={{ y: -5 }}
     >
       <Card
-        className="group relative bg-white rounded-md overflow-hidden cursor-pointer"
+        className="group relative bg-white rounded-lg overflow-hidden cursor-pointer shadow-none border-gray-200 border-2"
         onClick={onClick}
       >
         <div className="w-full aspect-[4/3] relative overflow-hidden">
@@ -98,7 +97,7 @@ const UICard = ({ ui, onClick }: { ui: UI; onClick: () => void }) => {
           />
         </div>
 
-        <CardContent className="p-2 space-y-1.5">
+        <CardContent className="p-2 space-y-1.5 border-t-2 border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 min-w-0">
               <UserAvatar
@@ -135,6 +134,16 @@ const UICard = ({ ui, onClick }: { ui: UI; onClick: () => void }) => {
   );
 };
 
+const CONTAINER_VARIANTS = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
 const HomeUICards = () => {
   const router = useRouter();
   const [uis, setUis] = useState<UI[]>([]);
@@ -148,35 +157,20 @@ const HomeUICards = () => {
     fetchUIs();
   }, []);
 
-  const container = useMemo(() => {
-    return {
-      hidden: { opacity: 0 },
-      show: {
-        opacity: 1,
-        transition: {
-          staggerChildren: 0.1,
-        },
-      },
-    };
-  }, []);
-
-  const handleCardClick = useCallback(
-    (ui: UI) => {
-      return () => router.push(`ui/${ui.id}`);
-    },
-    [router],
-  );
-
   return (
     <div className="container mx-auto px-4 py-6">
       <motion.div
-        variants={container}
+        variants={CONTAINER_VARIANTS}
         initial="hidden"
         animate="show"
         className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3"
       >
         {uis.map((ui) => (
-          <UICard key={ui.id} ui={ui} onClick={handleCardClick(ui)} />
+          <UICard
+            key={ui.id}
+            ui={ui}
+            onClick={() => router.push(`ui/${ui.id}`)}
+          />
         ))}
       </motion.div>
     </div>

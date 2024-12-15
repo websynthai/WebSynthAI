@@ -1,3 +1,5 @@
+'use client';
+
 import { createUI } from '@/actions/ui/create-ui';
 import { Badge } from '@/components/ui/badge';
 import { useAuthModal } from '@/hooks/useAuthModal';

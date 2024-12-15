@@ -1,6 +1,8 @@
 import { signOutGithub } from '@/actions/auth/sign-out';
+import { useAuthModal } from '@/hooks/useAuthModal';
 import { BugIcon, LogOut, Settings, SquareLibrary } from 'lucide-react';
 import type { User } from 'next-auth';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -15,17 +17,37 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 
-interface UserButtonProps {
-  user: User;
-}
-
-export default function UserButton({ user }: UserButtonProps) {
+export default function UserButton() {
   const router = useRouter();
+  const { toggle: toggleAuth } = useAuthModal();
+  const { data: session, status } = useSession();
 
   const handleSignOut = async () => {
     await signOutGithub();
     router.push('/');
   };
+
+  const isAuthenticated = status === 'authenticated';
+  const isUnauthenticated = status === 'unauthenticated';
+
+  if (status === 'loading') {
+    return <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />;
+  }
+
+  if (isUnauthenticated) {
+    return (
+      <Button
+        onClick={toggleAuth}
+        className="font-medium transition-all bg-gradient-to-r from-primary to-primary/80"
+      >
+        Sign In
+      </Button>
+    );
+  }
+
+  if (!(isAuthenticated && session?.user)) return null;
+
+  const user: User = session.user;
 
   return (
     <DropdownMenu>
