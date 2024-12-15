@@ -1,7 +1,6 @@
 'use client';
 
 import { getUIs } from '@/actions/ui/get-uis';
-import Header from '@/components/header';
 import ProjectCard from '@/components/project-card';
 import {
   Select,
@@ -174,7 +173,6 @@ const ExplorePage = () => {
 
   return (
     <div className="min-h-screen bg-background dark:bg-background">
-      <Header />
       <div className="container mx-auto p-4">
         <Tabs
           defaultValue={mode}

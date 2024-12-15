@@ -19,7 +19,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { themes as defaultThemes } from '@/lib/themes';
-import { PlusCircle, Save } from 'lucide-react';
+import {
+  ArrowLeft,
+  Palette,
+  PlusCircle,
+  Save,
+  Settings2,
+  Type,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect, use } from 'react';
 
@@ -138,129 +145,202 @@ export default function ThemeCustomizer(props: {
   );
 
   return (
-    <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
-      <div className="flex justify-start items-center mb-6">
-        <Button
-          onClick={() => router.push('/')}
-          variant="outline"
-          className="text-xl font-bold p-1"
-        >
-          v0.diy
-        </Button>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between mb-2">
         <Button
           onClick={() => router.push('/themes')}
-          variant="secondary"
-          className="ml-2 text-xl font-bold p-1"
+          variant="ghost"
+          className="flex items-center space-x-2 hover:bg-muted/80 transition-colors"
         >
-          Themes
+          <ArrowLeft className="h-4 w-4" />
+          <span>Back to Themes</span>
+        </Button>
+        <Button
+          onClick={() => saveTheme()}
+          className="flex items-center space-x-2 bg-primary text-primary-foreground hover:bg-primary/90"
+        >
+          <Save className="h-4 w-4" />
+          <span>Save Changes</span>
         </Button>
       </div>
-      <Card className="w-full max-w-4xl mx-auto shadow-lg rounded-md">
-        <CardHeader className="bg-primary text-white rounded-t-md">
-          <CardTitle className="text-2xl">
-            Theme Customizer (coming soon)
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6 p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="heading" className="text-lg font-semibold">
-                Heading Font
-              </Label>
-              <Select value={heading} onValueChange={setHeading}>
-                <SelectTrigger id="heading" className="mt-1">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Inter">Inter</SelectItem>
-                  <SelectItem value="Roboto">Roboto</SelectItem>
-                  <SelectItem value="Open Sans">Open Sans</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="body" className="text-lg font-semibold">
-                Body Font
-              </Label>
-              <Select value={body} onValueChange={setBody}>
-                <SelectTrigger id="body" className="mt-1">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Inter">Inter</SelectItem>
-                  <SelectItem value="Roboto">Roboto</SelectItem>
-                  <SelectItem value="Open Sans">Open Sans</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div>
-            <Label htmlFor="radius" className="text-lg font-semibold">
-              Border Radius (rem)
-            </Label>
-            <Input
-              id="radius"
-              type="number"
-              value={radius}
-              onChange={(e) => setRadius(Number.parseFloat(e.target.value))}
-              step={0.1}
-              min={0}
-              className="mt-1"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {properties.map((property) => (
-              <div key={property.name} className="space-y-2">
-                <Label className="font-medium">{property.name}</Label>
-                <ColorInput property={property} />
+
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
+        {/* Typography and Border Radius Column */}
+        <div className="lg:col-span-1 space-y-6">
+          <Card className="bg-card shadow-sm border border-border overflow-hidden">
+            <CardHeader className="border-b border-border bg-muted/50">
+              <div className="flex items-center space-x-2">
+                <Type className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg font-semibold text-foreground">
+                  Typography & Radius
+                </CardTitle>
               </div>
-            ))}
-          </div>
-          <div className="flex justify-between items-center mt-6">
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant={'secondary'}
-                  onClick={() => addNewVariable()}
-                  className="flex items-center space-x-2"
-                >
-                  <PlusCircle size={20} />
-                  <span>Add Variable</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New Variable</DialogTitle>
-                </DialogHeader>
-                <div className="py-4">
-                  <Label htmlFor="newVariableName" className="text-right">
-                    Variable Name
+            </CardHeader>
+            <CardContent className="space-y-6 p-6">
+              {/* Typography Section */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Heading Font
+                  </Label>
+                  <Select value={heading} onValueChange={setHeading}>
+                    <SelectTrigger className="w-full bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Inter">Inter</SelectItem>
+                      <SelectItem value="Roboto">Roboto</SelectItem>
+                      <SelectItem value="Open Sans">Open Sans</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Body Font
+                  </Label>
+                  <Select value={body} onValueChange={setBody}>
+                    <SelectTrigger className="w-full bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Inter">Inter</SelectItem>
+                      <SelectItem value="Roboto">Roboto</SelectItem>
+                      <SelectItem value="Open Sans">Open Sans</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Border Radius Section */}
+              <div className="space-y-4 pt-4 border-t border-border">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Border Radius (rem)
                   </Label>
                   <Input
-                    id="newVariableName"
-                    value={newVariableName}
-                    onChange={(e) => setNewVariableName(e.target.value)}
-                    className="mt-1"
+                    type="number"
+                    value={radius}
+                    onChange={(e) =>
+                      setRadius(Number.parseFloat(e.target.value))
+                    }
+                    step={0.1}
+                    min={0}
+                    className="bg-background"
                   />
                 </div>
-                <div className="flex justify-end">
-                  <DialogClose asChild>
-                    <Button onClick={handleNewVariableSubmit}>Add</Button>
-                  </DialogClose>
+                <div className="grid grid-cols-4 gap-2">
+                  {[0, 0.5, 1, 1.5].map((value) => (
+                    <Button
+                      key={value}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setRadius(value)}
+                      className={`${
+                        radius === value ? 'border-primary' : ''
+                      } hover:border-primary/50`}
+                    >
+                      {value}
+                    </Button>
+                  ))}
                 </div>
-              </DialogContent>
-            </Dialog>
-            <Button
-              onClick={() => saveTheme()}
-              variant={'default'}
-              className="flex items-center space-x-2"
-            >
-              <Save size={20} />
-              <span>Save Theme</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Color Variables Column */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="bg-card shadow-sm border border-border overflow-hidden">
+            <CardHeader className="border-b border-border bg-muted/50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Palette className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-lg font-semibold text-foreground">
+                    Color Variables
+                  </CardTitle>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="secondary" className="text-xs">
+                    Beta
+                  </Badge>
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => addNewVariable()}
+                        className="flex items-center space-x-2"
+                      >
+                        <PlusCircle className="h-4 w-4" />
+                        <span>Add Variable</span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Add New Color Variable</DialogTitle>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="newVariableName">Variable Name</Label>
+                          <Input
+                            id="newVariableName"
+                            value={newVariableName}
+                            onChange={(e) => setNewVariableName(e.target.value)}
+                            className="bg-background"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end">
+                        <DialogClose asChild>
+                          <Button onClick={handleNewVariableSubmit}>
+                            Add Variable
+                          </Button>
+                        </DialogClose>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {properties.map((property) => (
+                  <div
+                    key={property.name}
+                    className="group p-4 rounded-lg border border-border bg-muted/50 space-y-2 hover:bg-muted/70 hover:border-primary/20 transition-all duration-200"
+                  >
+                    <Label className="text-sm font-medium text-muted-foreground">
+                      {property.name}
+                    </Label>
+                    <ColorInput property={property} />
+                    <div
+                      className="h-2 rounded-full mt-2"
+                      style={{ backgroundColor: property.color }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Preview Section */}
+          <Card className="bg-card shadow-sm border border-border overflow-hidden">
+            <CardHeader className="border-b border-border bg-muted/50">
+              <div className="flex items-center space-x-2">
+                <Settings2 className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg font-semibold text-foreground">
+                  Theme Preview
+                </CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                {/* Add preview components here */}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

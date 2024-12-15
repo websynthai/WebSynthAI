@@ -108,15 +108,15 @@ export default function LLMSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <Card className="border border-gray-200">
-        <CardHeader className="border-b border-gray-200">
-          <CardTitle className="text-xl font-semibold">
+      <Card className="bg-card shadow-sm border border-border">
+        <CardHeader className="border-b border-border">
+          <CardTitle className="text-xl font-semibold text-foreground">
             Model Selection
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-muted-foreground">
             Choose your preferred LLM models for different tasks.
           </CardDescription>
-          <div className="bg-yellow-50 p-2 rounded-md flex items-start space-x-2 text-yellow-800">
+          <div className="bg-yellow-50/50 dark:bg-yellow-950/50 p-4 rounded-md flex items-start space-x-2 text-yellow-800 dark:text-yellow-300">
             <InfoIcon className="w-5 h-5 mt-0.5 flex-shrink-0" />
             <p className="text-sm">
               anthropicVertex:claude-3-5-sonnet@20240620 is not available.
@@ -125,15 +125,17 @@ export default function LLMSettingsPage() {
             </p>
           </div>
         </CardHeader>
-        <CardContent className="space-y-8 pt-5">
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Initial Model</h3>
-            <p className="text-sm text-gray-600 mb-2">
+        <CardContent className="space-y-8 pt-6">
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold text-foreground">
+              Initial Model
+            </h3>
+            <p className="text-sm text-muted-foreground">
               Used in the initial state. This model generates the basic struture
               of the UI.
             </p>
             <Select value={initialModel} onValueChange={setInitialModel}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full bg-background border-border">
                 <SelectValue placeholder="Select initial model" />
               </SelectTrigger>
               <SelectContent>
@@ -250,19 +252,26 @@ export default function LLMSettingsPage() {
         </CardContent>
       </Card>
 
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Custom Models</CardTitle>
-          <CardDescription>
+      <Card className="bg-card shadow-sm border border-border">
+        <CardHeader className="border-b border-border">
+          <CardTitle className="text-xl font-semibold text-foreground">
+            Custom Models
+          </CardTitle>
+          <CardDescription className="text-muted-foreground">
             Manage your custom Azure and Ollama models
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button>Add New Model</Button>
+              <Button
+                className="bg-primary text-primary-foreground hover:bg-primary/90
+                  transition-colors duration-200"
+              >
+                Add New Model
+              </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-background border border-border">
               <DialogHeader>
                 <DialogTitle>Add New Model</DialogTitle>
                 <DialogDescription>
@@ -301,54 +310,68 @@ export default function LLMSettingsPage() {
             </DialogContent>
           </Dialog>
 
-          <div className="mt-4">
+          <div className="mt-6 space-y-6">
             {azureModels.length > 0 && (
-              <h4 className="font-semibold">Custom Azure Models:</h4>
+              <div className="space-y-3">
+                <h4 className="font-semibold text-foreground">
+                  Custom Azure Models:
+                </h4>
+                <ul className="divide-y divide-border">
+                  {azureModels.map((model, index) => (
+                    <li
+                      key={index}
+                      className="flex items-center justify-between py-3"
+                    >
+                      <span className="text-sm text-foreground">
+                        {model.model}
+                        <span className="text-muted-foreground">
+                          ({model.modelId})
+                        </span>
+                      </span>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => removeModel('azure', model.modelId)}
+                        className="hover:bg-destructive/90 transition-colors duration-200"
+                      >
+                        Remove
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
-            <ul className="list-disc pl-5">
-              {azureModels.map((model, index) => (
-                <li
-                  key={index}
-                  className="flex items-center justify-between border-b py-2"
-                >
-                  <span>
-                    {model.model} ({model.modelId})
-                  </span>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => removeModel('azure', model.modelId)}
-                  >
-                    Remove
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          </div>
 
-          <div className="mt-4">
             {ollamaModels.length > 0 && (
-              <h4 className="font-semibold">Custom Ollama Models:</h4>
+              <div className="space-y-3">
+                <h4 className="font-semibold text-foreground">
+                  Custom Ollama Models:
+                </h4>
+                <ul className="divide-y divide-border">
+                  {ollamaModels.map((model, index) => (
+                    <li
+                      key={index}
+                      className="flex items-center justify-between py-3"
+                    >
+                      <span className="text-sm text-foreground">
+                        {model.model}
+                        <span className="text-muted-foreground">
+                          ({model.modelId})
+                        </span>
+                      </span>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => removeModel('ollama', model.modelId)}
+                        className="hover:bg-destructive/90 transition-colors duration-200"
+                      >
+                        Remove
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
-            <ul className="list-disc pl-5">
-              {ollamaModels.map((model, index) => (
-                <li
-                  key={index}
-                  className="flex items-center justify-between border-b py-2"
-                >
-                  <span>
-                    {model.model} ({model.modelId})
-                  </span>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => removeModel('ollama', model.modelId)}
-                  >
-                    Remove
-                  </Button>
-                </li>
-              ))}
-            </ul>
           </div>
         </CardContent>
       </Card>

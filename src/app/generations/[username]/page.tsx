@@ -2,27 +2,20 @@
 
 import { getUIProfile } from '@/actions/ui/get-uis';
 import { getUser } from '@/actions/user';
-import Header from '@/components/header';
-import PromptBadge from '@/components/prompt-badge';
+import ProjectCard from '@/components/project-card';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-  Badge,
   Card,
   CardContent,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
 } from '@/components/ui';
-import { timeAgo } from '@/lib/time';
-import { Eye, Heart } from 'lucide-react';
-import { CalendarDays, User as UserIcon } from 'lucide-react';
-import Image from 'next/image';
+import type { UI } from '@/types/user';
+import { Box, CalendarDays, User as UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { use, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -37,22 +30,36 @@ interface User {
   subPromptCount: number;
 }
 
-interface UI {
-  id: string;
-  userId: string;
-  prompt: string;
-  img: string;
-  createdAt: Date;
-  likesCount: number;
-  viewCount: number;
-  forkedFrom: string | null;
-  user: {
-    username: string;
-    imageUrl: string | null;
-  };
-}
+const EmptyState = ({ mode }: { mode: string }) => (
+  <div className="col-span-full flex flex-col items-center justify-center py-16 px-4 text-center">
+    <Box className="h-12 w-12 text-muted-foreground/50 mb-4" />
+    <h3 className="text-lg font-semibold text-foreground mb-2">No UIs found</h3>
+    <p className="text-sm text-muted-foreground max-w-[500px]">
+      {mode === 'ownUI'
+        ? "This user hasn't created any UIs yet."
+        : "This user hasn't liked any UIs yet."}
+    </p>
+  </div>
+);
 
-export default function MinimalistProfilePage(props: {
+const LoadingSkeleton = () => (
+  <>
+    {Array.from({ length: 9 }).map((_, i) => (
+      <div
+        key={i}
+        className="bg-card rounded-xl shadow-sm border border-border overflow-hidden animate-pulse"
+      >
+        <div className="w-full aspect-[4/3] bg-muted" />
+        <div className="p-2 flex items-center">
+          <div className="w-5 h-5 bg-muted rounded-full" />
+          <div className="w-20 h-5 bg-muted rounded-full ml-2" />
+        </div>
+      </div>
+    ))}
+  </>
+);
+
+export default function ProfilePage(props: {
   params: Promise<{ username: string }>;
 }) {
   const params = use(props.params);
@@ -127,186 +134,89 @@ export default function MinimalistProfilePage(props: {
   }, [handleLoadMore, isLoading]);
 
   return (
-    <div>
-      <Header />
-      <div className="flex items-start justify-center bg-gray-50 p-4 pt-10">
-        <Card className="w-full max-w-2xl bg-white shadow-lg">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-4">
+        <Card className="bg-card shadow-sm border border-border">
           <CardContent className="p-8">
-            <div className="flex flex-col space-y-8">
-              <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-6 sm:space-y-0 sm:space-x-8">
-                <Avatar
-                  onClick={() => router.push(`/generations/${user?.username}`)}
-                  className="h-32 w-32 border-2 border-gray-200"
-                >
-                  <AvatarImage src={user?.imageUrl || ''} alt={'A'} />
-                  <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col space-y-3 text-center sm:text-left">
-                  <h2 className="text-3xl font-semibold text-gray-800">
+            <div className="flex flex-col sm:flex-row items-start gap-8">
+              <Avatar
+                onClick={() => router.push(`/generations/${user?.username}`)}
+                className="h-32 w-32 border-2 border-border cursor-pointer"
+              >
+                <AvatarImage src={user?.imageUrl || ''} />
+                <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+              </Avatar>
+
+              <div className="flex-1 space-y-4">
+                <div>
+                  <h2 className="text-3xl font-semibold text-foreground">
                     {user?.name}
                   </h2>
-                  <p className="text-lg text-gray-600 flex items-center justify-center sm:justify-start">
+                  <p className="text-lg text-muted-foreground flex items-center mt-2">
                     <UserIcon className="mr-2 h-5 w-5" />@{user?.username}
                   </p>
-                  <p className="text-base text-gray-500 flex items-center justify-center sm:justify-start">
+                  <p className="text-muted-foreground flex items-center mt-2">
                     <CalendarDays className="mr-2 h-5 w-5" />
-                    Joined{' '}
-                    {user?.createdAt.toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
+                    Joined {user?.createdAt.toLocaleDateString()}
                   </p>
-                  <div className="border-t border-gray-200 pt-8">
-                    <ul className="space-y-6">
-                      <li className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <span className="text-xl font-medium text-gray-700">
-                            UI Generated
-                          </span>
-                        </div>
-                        <span className="text-3xl font-semibold text-gray-800">
-                          {user?.uiCount}
-                        </span>
-                      </li>
-                      <li className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <span className="text-xl font-medium text-gray-700">
-                            Subprompts
-                          </span>
-                        </div>
-                        <span className="text-3xl font-semibold text-gray-800">
-                          {user?.subPromptCount}
-                        </span>
-                      </li>
-                    </ul>
+                </div>
+
+                <div className="border-t border-border pt-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-muted-foreground">UI Generated</p>
+                      <p className="text-2xl font-semibold text-foreground">
+                        {user?.uiCount}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Subprompts</p>
+                      <p className="text-2xl font-semibold text-foreground">
+                        {user?.subPromptCount}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
-      </div>
-      <div className="max-w-7xl mx-auto pt-5">
+
         <Tabs
           defaultValue={mode}
-          className="w-full mb-4"
+          className="w-full mt-8"
           onValueChange={handleTabChange}
         >
-          <div className="flex justify-between py-2 ">
-            <TabsList className="bg-gray-300 rounded-lg shadow-sm p-2 px-1 h-10">
-              <TabsTrigger
-                value="ownUI"
-                className="px-4 py-2 text-sm font-medium"
-              >
-                User UIs
-              </TabsTrigger>
-              <TabsTrigger
-                value="likedUI"
-                className="px-4 py-2 text-sm font-medium"
-              >
-                Liked UIs
-              </TabsTrigger>
-            </TabsList>
-          </div>
+          <TabsList className="h-9 bg-muted/60 backdrop-blur-sm rounded-lg p-1">
+            <TabsTrigger
+              value="ownUI"
+              className="relative h-7 rounded-md px-3 text-sm font-medium transition-all"
+            >
+              User UIs
+            </TabsTrigger>
+            <TabsTrigger
+              value="likedUI"
+              className="relative h-7 rounded-md px-3 text-sm font-medium transition-all"
+            >
+              Liked UIs
+            </TabsTrigger>
+          </TabsList>
 
-          <TabsContent value={mode}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {uis?.map((ui) => (
-                <Card
-                  key={ui.id}
-                  className="bg-white rounded-xl shadow-md overflow-hidden"
-                >
-                  <div
+          <TabsContent value={mode} className="mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {isLoading ? (
+                <LoadingSkeleton />
+              ) : uis.length === 0 ? (
+                <EmptyState mode={mode} />
+              ) : (
+                uis.map((ui) => (
+                  <ProjectCard
+                    key={ui.id}
+                    ui={ui}
                     onClick={() => router.push(`/ui/${ui.id}`)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        router.push(`/ui/${ui.id}`);
-                      }
-                    }}
-                    className="w-full h-48 relative cursor-pointer"
-                  >
-                    <Image
-                      src={ui.img}
-                      alt={ui.prompt}
-                      className="object-cover"
-                      fill
-                    />
-                  </div>
-                  <CardContent className="p-2 flex items-center">
-                    <div className="flex items-start flex-grow min-w-0 relative">
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Avatar
-                            onClick={() =>
-                              router.push(`/generations/${ui?.user?.username}`)
-                            }
-                            className="border-2 border-primary h-5 w-5"
-                          >
-                            <AvatarImage src={ui.user.imageUrl ?? ''} />
-                            <AvatarFallback>
-                              {ui.user.username.substring(0, 2)}
-                            </AvatarFallback>
-                          </Avatar>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{ui.user.username}</p>
-                        </TooltipContent>
-                      </Tooltip>
-
-                      <Tooltip>
-                        <TooltipTrigger className="rounded-full font-semibold ml-2 flex-1 text-ellipsis overflow-hidden whitespace-nowrap">
-                          <PromptBadge
-                            variant={'secondary'}
-                            className="rounded-full font-semibold flex text-ellipsis overflow-hidden whitespace-nowrap"
-                            prompt={ui.prompt}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{ui.prompt}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <div className="flex items-center whitespace-nowrap ml-2 flex-shrink-0">
-                      <Badge
-                        variant={'secondary'}
-                        className="flex items-center rounded-s-full font-semibold px-2"
-                      >
-                        <Eye className="h-4 w-4 mr-1" />
-                        <p className="text-xs text-gray-600">{ui.viewCount}</p>
-                      </Badge>
-                      <Badge
-                        variant={'secondary'}
-                        className="flex items-center rounded-e-full font-semibold px-2"
-                      >
-                        <Heart className="h-4 w-4 mr-1" />
-                        <p className="text-xs text-gray-600">{ui.likesCount}</p>
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-gray-600 whitespace-nowrap ml-2 flex-shrink-0">
-                      {timeAgo(ui.createdAt)}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-              {isLoading &&
-                [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-                  <Card
-                    key={i}
-                    className="bg-white rounded-xl shadow-md overflow-hidden animate-pulse"
-                  >
-                    <div className="relative">
-                      <div className="w-full h-48 bg-gray-200" />
-                    </div>
-                    <CardContent className="p-2 flex items-center">
-                      <div className="flex items-center flex-grow min-w-0 relative">
-                        <div className="w-5 h-5 bg-gray-200 rounded-full" />
-                        <div className="w-20 h-5 bg-gray-200 rounded-full ml-2" />
-                      </div>
-                      <div className="w-16 h-5 bg-gray-200 rounded-full" />
-                    </CardContent>
-                  </Card>
-                ))}
+                  />
+                ))
+              )}
             </div>
           </TabsContent>
         </Tabs>

@@ -2,12 +2,14 @@ import type { Metadata, Viewport } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { Geist } from 'next/font/google';
 import './globals.css';
+import MAINTENANCE from '@/app/maintenance/page';
 import AuthModal from '@/components/auth-modal';
+import Header from '@/components/header';
 import { TooltipProvider } from '@/components/ui';
 import { Toaster } from '@/components/ui/sonner';
+import { cn } from '@/lib/utils';
 import { ThemeProvider } from 'next-themes';
 import Script from 'next/script';
-import MAINTENANCE from './maintenance/page';
 
 const geist = Geist({
   subsets: ['latin'],
@@ -79,7 +81,7 @@ export default function RootLayout({
               strategy="afterInteractive"
             />
           </head>
-          <body className={geist.className}>
+          <body className={cn(geist.className, 'h-full')}>
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
@@ -91,6 +93,7 @@ export default function RootLayout({
                 <MAINTENANCE />
               ) : (
                 <>
+                  <Header />
                   {children}
                   <AuthModal />
                 </>

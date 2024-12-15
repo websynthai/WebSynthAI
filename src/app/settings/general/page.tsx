@@ -27,29 +27,34 @@ export default function GeneralSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <Card className="border border-gray-200">
-        <CardHeader className="border-b border-gray-200">
-          <CardTitle className="text-xl font-semibold">
+      <Card className="bg-card shadow-sm border border-border">
+        <CardHeader className="border-b border-border">
+          <CardTitle className="text-xl font-semibold text-foreground">
             General Settings
           </CardTitle>
-          <CardDescription>description</CardDescription>
+          <CardDescription className="text-muted-foreground">
+            Manage your account settings.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 pt-6">
           <div className="flex justify-between items-center">
-            <Label htmlFor="preview-deployments" className="font-medium">
+            <Label
+              htmlFor="preview-deployments"
+              className="font-medium text-foreground"
+            >
               Default visibility
             </Label>
             <Select defaultValue="public">
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] bg-background border-border">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="public">Default (public)</SelectItem>
-                <SelectItem value="private">private</SelectItem>
+                <SelectItem value="public">Public (default)</SelectItem>
+                <SelectItem value="private">Private</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="bg-blue-50 p-4 rounded-md flex items-start space-x-2 text-blue-800">
+          <div className="bg-blue-50/50 dark:bg-blue-950/50 p-4 rounded-md flex items-start space-x-2 text-blue-800 dark:text-blue-300">
             <InfoIcon className="w-5 h-5 mt-0.5 flex-shrink-0" />
             <p className="text-sm">
               Under development. This setting will be used as the default
@@ -57,20 +62,23 @@ export default function GeneralSettingsPage() {
             </p>
           </div>
           <div className="flex justify-between items-center">
-            <Label htmlFor="production-deployments" className="font-medium">
+            <Label
+              htmlFor="production-deployments"
+              className="font-medium text-foreground"
+            >
               Image preview quality
             </Label>
             <Select defaultValue="low">
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] bg-background border-border">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="low">Default (low)</SelectItem>
-                <SelectItem value="high">high</SelectItem>
+                <SelectItem value="low">Low (default)</SelectItem>
+                <SelectItem value="high">High</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="bg-blue-50 p-4 rounded-md flex items-start space-x-2 text-blue-800">
+          <div className="bg-blue-50/50 dark:bg-blue-950/50 p-4 rounded-md flex items-start space-x-2 text-blue-800 dark:text-blue-300">
             <InfoIcon className="w-5 h-5 mt-0.5 flex-shrink-0" />
             <p className="text-sm">
               Under development. This setting will be used as the default
@@ -119,18 +127,22 @@ export default function GeneralSettingsPage() {
         </CardContent>
       </Card> */}
 
-      <Card className="border border-gray-200">
+      <Card className="bg-card shadow-sm border border-border">
         <CardHeader
-          className="border-b border-gray-200 cursor-pointer"
+          className="border-b border-border cursor-pointer"
           onClick={() => setAdvancedSettingsOpen(!advancedSettingsOpen)}
         >
           <div className="flex justify-between items-center">
-            <CardTitle className="text-xl font-semibold">
+            <CardTitle className="text-xl font-semibold text-foreground">
               Advanced Settings (coming soon)
             </CardTitle>
-            {advancedSettingsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+            {advancedSettingsOpen ? (
+              <ChevronUpIcon className="text-foreground" />
+            ) : (
+              <ChevronDownIcon className="text-foreground" />
+            )}
           </div>
-          <CardDescription>
+          <CardDescription className="text-muted-foreground">
             Configure advanced options for your account.
           </CardDescription>
         </CardHeader>
@@ -138,10 +150,13 @@ export default function GeneralSettingsPage() {
           <CardContent className="space-y-6 pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="developer-mode" className="font-medium">
+                <Label
+                  htmlFor="developer-mode"
+                  className="font-medium text-foreground"
+                >
                   Developer Mode
                 </Label>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   Enable additional developer features and logs.
                 </p>
               </div>
@@ -153,10 +168,13 @@ export default function GeneralSettingsPage() {
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="experimental-features" className="font-medium">
+                <Label
+                  htmlFor="experimental-features"
+                  className="font-medium text-foreground"
+                >
                   Experimental Features
                 </Label>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   Try out new experimental features before they&apos;re
                   released.
                 </p>
@@ -169,8 +187,8 @@ export default function GeneralSettingsPage() {
             </div>
           </CardContent>
         )}
-        <CardFooter className="flex justify-end items-center border-t border-gray-200 pt-6">
-          <Button>Save Advanced Settings</Button>
+        <CardFooter className="flex justify-end items-center border-t border-border pt-6">
+          <Button variant="outline">Save</Button>
         </CardFooter>
       </Card>
     </div>

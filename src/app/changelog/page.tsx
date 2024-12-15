@@ -1,6 +1,5 @@
 'use client';
 
-import Header from '@/components/header';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   type Change,
@@ -108,7 +107,6 @@ export default function Changelog() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <Header />
       <div className="pt-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
