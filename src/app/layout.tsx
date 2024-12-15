@@ -1,14 +1,15 @@
-import type { Metadata, Viewport } from 'next';
-import { SessionProvider } from 'next-auth/react';
-import { Geist } from 'next/font/google';
 import './globals.css';
+
 import MAINTENANCE from '@/app/maintenance/page';
 import AuthModal from '@/components/auth-modal';
 import Header from '@/components/header';
-import { ScrollArea, TooltipProvider } from '@/components/ui';
+import { TooltipProvider } from '@/components/ui';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
+import type { Metadata, Viewport } from 'next';
+import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from 'next-themes';
+import { Geist } from 'next/font/google';
 import Script from 'next/script';
 
 const geist = Geist({
@@ -38,7 +39,6 @@ export const metadata: Metadata = {
     'web development',
     'React components',
   ],
-  authors: [{ name: 'v0.diy' }],
   openGraph: {
     title: 'v0.diy - UI Component Generator',
     description:
@@ -92,14 +92,12 @@ export default function RootLayout({
               {process.env.MAINTENANCE === 'MAINTENANCE' ? (
                 <MAINTENANCE />
               ) : (
-                <div className="relative flex min-h-screen flex-col">
+                <>
                   <Header />
-                  <ScrollArea className="flex-1 h-[calc(100vh-4rem)]">
-                    <main className="flex-1">{children}</main>
-                  </ScrollArea>
+                  <main>{children}</main>
                   <AuthModal />
                   <Toaster />
-                </div>
+                </>
               )}
             </ThemeProvider>
           </TooltipProvider>
