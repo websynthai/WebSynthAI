@@ -88,9 +88,9 @@ const PromptInput = () => {
         hover:shadow-lg hover:bg-background/80
         dark:bg-background/20 dark:hover:bg-background/30
         dark:shadow-lg dark:shadow-primary/5
-        relative h-[150px]"
+        relative"
       >
-        <div className="h-full">
+        <div className="flex flex-col">
           <AnimatePresence>
             {selectedImage && (
               <motion.div
@@ -111,7 +111,7 @@ const PromptInput = () => {
                   damping: 25,
                   stiffness: 200,
                 }}
-                className="bg-background/50 relative rounded-t-xl text-gray-600 ring-2 ring-primary/20 overflow-hidden"
+                className="bg-background/50 relative text-gray-600 border-b"
               >
                 <div className="flex items-center gap-3 p-3">
                   <div className="relative h-10 w-[150px] shrink-0">
@@ -154,99 +154,106 @@ const PromptInput = () => {
             )}
           </AnimatePresence>
 
-          <div className="absolute inset-0 bottom-[52px] overflow-auto">
-            <Textarea
-              value={input}
-              placeholder="Describe your UI component..."
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyPress}
-              className="w-full px-4 py-3
-                text-foreground placeholder:text-muted-foreground
-                outline-none focus:ring-0
-                resize-none min-h-full rounded-none border-none border-0
-                focus-visible:ring-0
-                transition-colors duration-200
-                hover:bg-muted/50"
-              autoFocus
-              spellCheck={false}
-            />
-          </div>
+          <div className="h-[150px] relative">
+            <div className="absolute inset-0 bottom-[52px] overflow-auto">
+              <Textarea
+                value={input}
+                placeholder="Describe your UI component..."
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyPress}
+                className="w-full px-4 py-3
+                  text-foreground placeholder:text-muted-foreground
+                  outline-none focus:ring-0
+                  resize-none min-h-full rounded-none border-none border-0
+                  focus-visible:ring-0
+                  transition-colors duration-200
+                  hover:bg-muted/50"
+                autoFocus
+                spellCheck={false}
+              />
+            </div>
 
-          <div
-            className="absolute bottom-0 left-0 right-0
-            bg-background/80 backdrop-blur-sm border-t
-            transition-all duration-200
-            dark:bg-background/40 dark:border-border/50"
-          >
-            <div className="p-2 flex items-center gap-2">
-              <div className="flex items-center gap-2 flex-1">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  ref={fileInputRef}
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <PaperclipIcon className="h-4 w-4" />
-                  <span className="sr-only">Upload Image</span>
-                </Button>
+            <div
+              className="absolute bottom-0 left-0 right-0
+              bg-background/80 backdrop-blur-sm border-t
+              transition-all duration-200
+              dark:bg-background/40 dark:border-border/50"
+            >
+              <div className="p-2 flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-1">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    ref={fileInputRef}
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <PaperclipIcon className="h-4 w-4" />
+                    <span className="sr-only">Upload Image</span>
+                  </Button>
 
-                <Select onValueChange={setUIType} value={uiType}>
-                  <SelectTrigger className="w-[110px]">
-                    <SelectValue placeholder="Framework" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="shadcn-react">Shadcn/UI</SelectItem>
-                    <SelectItem value="nextui-react">Next UI</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <Select onValueChange={setUIType} value={uiType}>
+                    <SelectTrigger className="w-[110px]">
+                      <SelectValue placeholder="Framework" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="shadcn-react">Shadcn/UI</SelectItem>
+                      <SelectItem value="nextui-react">Next UI</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                <Select defaultValue="ionicons">
-                  <SelectTrigger className="w-[100px]">
-                    <SelectValue placeholder="Icons" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ionicons">Ion Icons</SelectItem>
-                    <SelectItem value="lucidereact" disabled>
-                      <span className="flex items-center gap-2">
-                        Lucide
-                        <Lock className="h-3 w-3" />
-                      </span>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  <Select defaultValue="ionicons">
+                    <SelectTrigger className="w-[100px]">
+                      <SelectValue placeholder="Icons" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ionicons">Ion Icons</SelectItem>
+                      <SelectItem value="lucidereact" disabled>
+                        <span className="flex items-center gap-2">
+                          Lucide
+                          <Lock className="h-3 w-3" />
+                        </span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => router.push('/settings/llm')}
-                >
-                  <Settings2 className="h-4 w-4" />
-                  <span className="sr-only">Settings</span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => router.push('/settings/llm')}
+                  >
+                    <Settings2 className="h-4 w-4" />
+                    <span className="sr-only">Settings</span>
+                  </Button>
+                </div>
+
+                <Button onClick={generateUI} size="icon" variant="outline">
+                  {loading ? (
+                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <ArrowUp className="h-4 w-4" />
+                  )}
+                  <span className="sr-only">Generate UI</span>
                 </Button>
               </div>
-
-              <Button onClick={generateUI} size="icon" variant="outline">
-                {loading ? (
-                  <LoaderCircle className="h-4 w-4 animate-spin" />
-                ) : (
-                  <ArrowUp className="h-4 w-4" />
-                )}
-                <span className="sr-only">Generate UI</span>
-              </Button>
             </div>
           </div>
         </div>
       </Card>
 
       {selectedImage && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <InfoIcon className="h-4 w-4" />
+        <div
+          className="flex items-center gap-2 p-2 text-sm rounded-md
+          bg-muted/50 text-foreground/80
+          dark:bg-background/50 dark:text-foreground/70
+          border border-border/50"
+        >
+          <InfoIcon className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
           <p>
             Image to code is in Beta. It doesn&apos;t support ShadcnUI/NextUI
             yet.

@@ -26,7 +26,7 @@ const SuggestionBadge = ({ text, onClick }: SuggestionProps) => (
   <Badge
     onClick={() => onClick(text)}
     variant="secondary"
-    className="h-6 px-2 text-xs inline-flex shrink-0 cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-full border bg-muted hover:bg-gray-100 transition-all font-medium gap-0.5 text-gray-900 focus:ring-2 focus:ring-blue-600 focus:ring-offset-1"
+    className="h-6 px-2 text-xs inline-flex shrink-0 cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-full border bg-muted hover:bg-gray-100 dark:hover:bg-gray-800 transition-all font-medium gap-0.5 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-600 focus:ring-offset-1"
   >
     <span>{text}</span>
     <svg height="16" width="16" viewBox="0 0 16 16" className="text-current">

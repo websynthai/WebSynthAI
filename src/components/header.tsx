@@ -1,5 +1,6 @@
 'use client';
 
+import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import UserButton from '@/components/user-button';
 import { cn } from '@/lib/utils';
@@ -27,7 +28,7 @@ const Header = () => {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60',
+        'sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
         'transition-all duration-200',
       )}
     >
@@ -65,8 +66,8 @@ const Header = () => {
                   'flex items-center space-x-2 text-base font-medium',
                   'transition-all duration-200',
                   pathname === path
-                    ? 'bg-gray-100 text-primary'
-                    : 'hover:bg-gray-50 hover:text-primary',
+                    ? 'bg-secondary text-primary dark:bg-secondary/10'
+                    : 'hover:bg-secondary/80 hover:text-primary dark:hover:bg-secondary/20',
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -77,6 +78,7 @@ const Header = () => {
         </div>
 
         <div className="flex items-center space-x-4">
+          <ThemeToggle />
           <Button
             onClick={() =>
               window.open('https://github.com/SujalXplores/v0.diy')
@@ -85,7 +87,7 @@ const Header = () => {
             size="icon"
             className={cn(
               'hidden items-center transition-all',
-              'hover:bg-gray-50 hover:text-primary sm:flex',
+              'hover:bg-secondary/80 hover:text-primary dark:hover:bg-secondary/20 sm:flex',
             )}
           >
             <GithubIcon />

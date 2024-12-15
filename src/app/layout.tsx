@@ -5,6 +5,7 @@ import './globals.css';
 import AuthModal from '@/components/auth-modal';
 import { TooltipProvider } from '@/components/ui';
 import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from 'next-themes';
 import Script from 'next/script';
 import MAINTENANCE from './maintenance/page';
 
@@ -63,9 +64,8 @@ export default function RootLayout({
   return (
     <SessionProvider>
       <TooltipProvider>
-        <html lang="en">
+        <html lang="en" className="h-full antialiased" suppressHydrationWarning>
           <head>
-            {/* //TODO remove scripts after fixing the bug in iframe */}
             <Script
               type="module"
               src={
@@ -80,15 +80,22 @@ export default function RootLayout({
             />
           </head>
           <body className={geist.className}>
-            <Toaster richColors expand />
-            {process.env.MAINTENANCE === 'MAINTENANCE' ? (
-              <MAINTENANCE />
-            ) : (
-              <>
-                {children}
-                <AuthModal />
-              </>
-            )}
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Toaster richColors expand />
+              {process.env.MAINTENANCE === 'MAINTENANCE' ? (
+                <MAINTENANCE />
+              ) : (
+                <>
+                  {children}
+                  <AuthModal />
+                </>
+              )}
+            </ThemeProvider>
           </body>
         </html>
       </TooltipProvider>

@@ -62,7 +62,7 @@ const Stats = ({
   viewCount: number;
   likesCount: number;
 }) => (
-  <div className="flex items-center gap-1.5 text-[10px] text-gray-500">
+  <div className="flex items-center gap-1.5 text-[10px] text-gray-500 dark:text-gray-400">
     <span className="flex items-center gap-0.5">
       <Eye className="h-3 w-3" />
       {viewCount}
@@ -84,7 +84,7 @@ const UICard = ({ ui, onClick }: { ui: UI; onClick: () => void }) => {
       transition={{ duration: 0.3 }}
     >
       <Card
-        className="group relative bg-white rounded-lg overflow-hidden cursor-pointer shadow-none border-gray-200 border-2"
+        className="group relative bg-background dark:bg-background rounded-lg overflow-hidden cursor-pointer shadow-none border-border dark:border-border border-2"
         onClick={onClick}
       >
         <div className="w-full aspect-[4/3] relative overflow-hidden">
@@ -97,7 +97,7 @@ const UICard = ({ ui, onClick }: { ui: UI; onClick: () => void }) => {
           />
         </div>
 
-        <CardContent className="p-2 space-y-1.5 border-t-2 border-gray-200">
+        <CardContent className="p-2 space-y-1.5 border-t-2 border-border dark:border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 min-w-0">
               <UserAvatar
@@ -106,7 +106,7 @@ const UICard = ({ ui, onClick }: { ui: UI; onClick: () => void }) => {
               />
               <Tooltip>
                 <TooltipTrigger className="min-w-0">
-                  <p className="text-[10px] text-gray-600 truncate">
+                  <p className="text-[10px] text-foreground dark:text-foreground truncate">
                     {ui.prompt}
                   </p>
                 </TooltipTrigger>
@@ -121,10 +121,10 @@ const UICard = ({ ui, onClick }: { ui: UI; onClick: () => void }) => {
           <div className="flex items-center justify-between">
             <PromptBadge
               variant="secondary"
-              className="text-[9px] px-1.5 py-0.5 bg-gray-100"
+              className="text-[9px] px-1.5 py-0.5 bg-secondary dark:bg-secondary text-secondary-foreground dark:text-secondary-foreground"
               prompt={ui.uiType}
             />
-            <span className="text-[9px] text-gray-500">
+            <span className="text-[9px] text-muted-foreground dark:text-muted-foreground">
               {timeAgo(ui.updatedAt || ui.createdAt)}
             </span>
           </div>
