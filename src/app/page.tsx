@@ -124,7 +124,7 @@ export default function Home() {
     <div>
       <Header />
       <div className="flex items-center justify-center mt-16">
-        <div className="w-full max-w-2xl h-auto items-center flex flex-col space-y-6">
+        <div className="w-full max-w-2xl h-auto items-center flex flex-col space-y-4">
           <p className="font-bold text-5xl bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 animate-gradient bg-[length:200%_auto] bg-clip-text text-transparent">
             Think. Build. Ship.
           </p>

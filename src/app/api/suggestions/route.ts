@@ -9,8 +9,6 @@ const DEFAULT_SUGGESTIONS = [
   'Login page for netflix',
   'Product detail card for sneakers',
   'Ecommerce checkout page',
-  'Dashboard for sales data',
-  'Instagram App UI clone',
 ];
 
 export async function GET(req: Request): Promise<Response> {
@@ -48,12 +46,12 @@ export async function GET(req: Request): Promise<Response> {
             },
           }),
         },
-        prompt: `You are a UI designer. Generate 5 unique UI component ideas.
+        prompt: `You are a UI designer. Generate 3 unique UI component ideas.
 
-IMPORTANT: Respond ONLY with a JSON array containing exactly 5 strings. No markdown, no explanations.
+IMPORTANT: Respond ONLY with a JSON array containing exactly 3 strings. No markdown, no explanations.
 
 Example response:
-["3D parallax card", "Floating action menu", "Gradient progress bar", "Animated avatar", "Smart dropdown"]
+["3D parallax card", "Floating action menu", "Gradient progress bar"]
 
 Requirements:
 - Each idea must be under 60 characters
@@ -63,7 +61,7 @@ Requirements:
 - Include animations or interactions`,
       });
 
-      if (suggestions.length === 5) {
+      if (suggestions.length === 3) {
         return new Response(JSON.stringify(suggestions), {
           headers: { 'content-type': 'application/json' },
         });
@@ -74,7 +72,7 @@ Requirements:
         if (match) {
           try {
             const parsed = JSON.parse(match[0]);
-            if (Array.isArray(parsed) && parsed.length === 5) {
+            if (Array.isArray(parsed) && parsed.length === 3) {
               return new Response(JSON.stringify(parsed), {
                 headers: { 'content-type': 'application/json' },
               });
