@@ -1,39 +1,58 @@
-# v0.diy
+# 🎨 v0.diy
 
-An open-source alternative to v0.dev that integrates various AI providers for UI component generation. This project offers a comprehensive set of features for creating, managing, and customizing UI components using different frameworks and design systems.
+<div align="center">
+  <h3>Your Open-Source AI UI Generator</h3>
+  <p>Transform text prompts into beautiful UI components powered by multiple AI providers</p>
+</div>
 
-## ✨ Features
+<div align="center">
+  <a href="#-features">Features</a> •
+  <a href="#-getting-started">Getting Started</a> •
+  <a href="#-tech-stack">Tech Stack</a> •
+  <a href="#-contributing">Contributing</a> •
+  <a href="#-license">License</a>
+</div>
 
-- 🎨 Multi-Framework UI Generation
-  - shadcn/ui components
-  - NextUI components
-  - Tailwind CSS styling
-- 🤖 Multiple AI Provider Support
-  - OpenAI
-  - Anthropic
-  - Google AI
-  - Mistral
-  - And more...
-- 📱 Advanced UI Tools
-  - Responsive design analyzer
-  - Code copy functionality
-  - Component forking
-  - Unlimited UI modifications
-  - Theme management
-- 🔄 Version Control
-  - Fork and modify existing components
-  - Track changes and updates
-  - Collaborative development
+## ✨ What is v0.diy?
 
-## 🚀 Getting Started
+v0.diy is an open-source alternative to v0.dev that puts the power of AI-driven UI generation in your hands. Create, customize, and manage UI components using your preferred frameworks and AI providers.
+
+### Key Highlights
+
+- 🎯 **Multi-Framework Support**: Generate components for shadcn/ui, NextUI, and more
+- 🤖 **Multiple AI Providers**: Choose from OpenAI, Anthropic, Google AI, Mistral, etc.
+- 🎨 **Advanced Customization**: Full control over themes, styles, and responsive design
+- 🔄 **Version Control**: Track changes, fork components, and collaborate seamlessly
+
+## 🚀 Features
+
+### UI Generation
+- Generate components from text prompts or images
+- Support for multiple UI frameworks
+- Real-time preview and editing
+- Responsive design analyzer
+
+### AI Integration
+- Multiple provider support
+- Custom model selection
+- Optimized prompts for UI generation
+- Advanced context understanding
+
+### Developer Tools
+- Code copy functionality
+- Component forking
+- Theme management
+- Version control
+- Collaborative development
+
+## 🛠 Getting Started
 
 ### Prerequisites
-
 - Node.js 18.x or later
 - PostgreSQL database
 - Git
 
-### Installation
+### Quick Start
 
 1. Clone the repository:
 ```bash
@@ -56,11 +75,11 @@ npm install
 npm run dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to see your application.
+Visit `http://localhost:3000` to start generating UI components!
 
-## 🔧 Environment Configuration
+## 🔧 Environment Setup
 
-Create a `.env.local` file with the following configuration:
+Create a `.env.local` file with:
 
 ```env
 # Database
@@ -76,50 +95,22 @@ UPSTASH_REDIS_REST_URL=your_upstash_redis_rest_url
 UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_rest_token
 ```
 
-## 🤖 AI Model Providers
+## 🤖 Tech Stack
 
-This project leverages the [Vercel AI SDK](https://sdk.vercel.ai/providers/ai-sdk-providers) for AI model integration. Supported providers include:
-
-- OpenAI
-- Anthropic
-- Google AI
-- Mistral
-- Custom providers through Vertex AI
-
-## 📚 Tech Stack
-
-- **Framework**: Next.js 15
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui, NextUI
-- **Database**: PostgreSQL with Prisma
-- **Authentication**: NextAuth.js
-- **State Management**: Zustand
-- **AI Integration**: Vercel AI SDK
-
-## 🌟 Key Features Explained
-
-### UI Generation
-- Support for multiple UI frameworks
-- AI-powered component generation
-- Custom theme support
-- Responsive design tools
-
-### Version Control
-- Fork existing components
-- Track changes
-- Collaborative development
-
-### Theme Management
-- Custom theme creation
-- Real-time preview
-- Theme export/import
+- **Framework**: [Next.js 15](https://nextjs.org)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com), [NextUI](https://nextui.org)
+- **Database**: PostgreSQL with [Prisma](https://prisma.io)
+- **Authentication**: [NextAuth.js](https://next-auth.js.org)
+- **State Management**: [Zustand](https://zustand-demo.pmnd.rs)
+- **AI Integration**: [Vercel AI SDK](https://sdk.vercel.ai)
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
+We welcome contributions! Check out our [Contributing Guide](CONTRIBUTING.md) to get started.
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
@@ -134,4 +125,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Vercel](https://vercel.com) for the AI SDK
 - [shadcn/ui](https://ui.shadcn.com) for UI components
 - [NextUI](https://nextui.org) for additional components
-- 
