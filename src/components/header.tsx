@@ -90,7 +90,7 @@ const Header = () => {
               'hover:bg-secondary/80 hover:text-primary dark:hover:bg-secondary/20 sm:flex',
             )}
           >
-            <GithubIcon />
+            <GithubIcon className="h-4 w-4" />
           </Button>
 
           <UserButton />
