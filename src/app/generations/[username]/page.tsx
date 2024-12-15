@@ -1,5 +1,6 @@
 'use client';
-import { getUIProfile, getUIs } from '@/actions/ui/get-uis';
+
+import { getUIProfile } from '@/actions/ui/get-uis';
 import { getUser } from '@/actions/user';
 import Header from '@/components/header';
 import PromptBadge from '@/components/prompt-badge';

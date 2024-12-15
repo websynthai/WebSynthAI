@@ -2,14 +2,8 @@
 
 import { getUIs } from '@/actions/ui/get-uis';
 import Header from '@/components/header';
-import PromptBadge from '@/components/prompt-badge';
+import ProjectCard from '@/components/project-card';
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Badge,
-  Card,
-  CardContent,
   Select,
   SelectContent,
   SelectItem,
@@ -19,17 +13,13 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
 } from '@/components/ui';
-import { timeAgo } from '@/lib/time';
-import { Eye, Heart } from 'lucide-react';
-import Image from 'next/image';
+import type { UI } from '@/types/user';
+import { Box, SearchX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
-const Page = () => {
+const ExplorePage = () => {
   const [mode, setMode] = useState<string>('latest');
   const [timeRange, setTimeRange] = useState<string>('all');
   const [uis, setUis] = useState<UI[]>([]);
@@ -39,52 +29,34 @@ const Page = () => {
   const limit = 9;
   const router = useRouter();
 
-  interface UI {
-    id: string;
-    userId: string;
-    prompt: string;
-    img: string;
-    createdAt: Date;
-    likesCount: number;
-    viewCount: number;
-    forkedFrom: string | null;
-    user: {
-      username: string;
-      imageUrl: string | null;
-    };
-  }
+  const fetchUIs = async () => {
+    setIsLoading(true);
+    const fetchedUIs = await getUIs(mode, start, limit, timeRange);
+    if (fetchedUIs.length === 0) {
+      setMaxReached(true);
+    }
+    if (start === 0) {
+      setUis(fetchedUIs);
+    } else {
+      setUis((prevUis) => [...prevUis, ...fetchedUIs]);
+    }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    const fetchUIs = async () => {
-      setIsLoading(true);
-      const fetchedUIs = await getUIs(mode, start, limit, timeRange);
-      if (fetchedUIs.length === 0) {
-        setMaxReached(true);
-      }
-      if (start === 0) {
-        setUis(fetchedUIs);
-      } else {
-        setUis((prevUis) => [...prevUis, ...fetchedUIs]);
-      }
-      setIsLoading(false);
-    };
-
     fetchUIs();
   }, [mode, start, timeRange]);
 
-  const handleTabChange = (value: string) => {
-    setMaxReached(false);
-    setUis([]);
-    setMode(value);
-    setStart(0);
-  };
+  const resetAndUpdate =
+    (updateFn: (value: string) => void) => (value: string) => {
+      setMaxReached(false);
+      setUis([]);
+      setStart(0);
+      updateFn(value);
+    };
 
-  const handleTimeRangeChange = (value: string) => {
-    setMaxReached(false);
-    setUis([]);
-    setTimeRange(value);
-    setStart(0);
-  };
+  const handleTabChange = resetAndUpdate(setMode);
+  const handleTimeRangeChange = resetAndUpdate(setTimeRange);
 
   const handleLoadMore = useCallback(() => {
     if (!maxReached) {
@@ -94,6 +66,7 @@ const Page = () => {
 
   useEffect(() => {
     if (isLoading) return;
+
     const handleScroll = () => {
       const bottom =
         window.innerHeight + window.scrollY >=
@@ -107,156 +80,138 @@ const Page = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleLoadMore, isLoading]);
 
+  const EmptyState = ({ type }: { type: 'no-results' | 'no-projects' }) => (
+    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+      {type === 'no-results' ? (
+        <>
+          <SearchX className="h-12 w-12 text-muted-foreground/50 mb-4" />
+          <h3 className="text-lg font-semibold text-foreground mb-2">
+            No results found
+          </h3>
+          <p className="text-sm text-muted-foreground max-w-[500px]">
+            We couldn't find any projects matching your current filters. Try
+            adjusting your search criteria or check back later for new content.
+          </p>
+        </>
+      ) : (
+        <>
+          <Box className="h-12 w-12 text-muted-foreground/50 mb-4" />
+          <h3 className="text-lg font-semibold text-foreground mb-2">
+            No projects yet
+          </h3>
+          <p className="text-sm text-muted-foreground max-w-[500px]">
+            Be the first to create and share your UI projects with the
+            community.
+          </p>
+        </>
+      )}
+    </div>
+  );
+
+  const TimeRangeSelect = () =>
+    mode !== 'latest' && (
+      <Select onValueChange={handleTimeRangeChange} defaultValue={timeRange}>
+        <SelectTrigger className="w-[140px] md:w-[180px] h-9 rounded-lg bg-background dark:bg-background border-border dark:border-border focus-visible:ring-primary/20 dark:focus-visible:ring-primary/20">
+          <SelectValue placeholder="Time Range" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="1h">Last 1 Hour</SelectItem>
+          <SelectItem value="24h">Last 24 Hours</SelectItem>
+          <SelectItem value="7d">This Week</SelectItem>
+          <SelectItem value="30d">This Month</SelectItem>
+          <SelectItem value="all">All Time</SelectItem>
+        </SelectContent>
+      </Select>
+    );
+
+  const LoadingSkeleton = () =>
+    Array.from({ length: 9 }).map((_, i) => (
+      <div
+        key={i}
+        className="bg-card dark:bg-card rounded-xl shadow-sm dark:shadow-none border border-border dark:border-border overflow-hidden animate-pulse"
+      >
+        <div className="w-full aspect-[4/3] bg-muted dark:bg-muted" />
+        <div className="p-2 flex items-center">
+          <div className="w-5 h-5 bg-muted dark:bg-muted rounded-full" />
+          <div className="w-20 h-5 bg-muted dark:bg-muted rounded-full ml-2" />
+        </div>
+      </div>
+    ));
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <LoadingSkeleton />
+        </div>
+      );
+    }
+
+    if (!uis || uis.length === 0) {
+      return (
+        <EmptyState
+          type={
+            timeRange !== 'all' || mode !== 'latest'
+              ? 'no-results'
+              : 'no-projects'
+          }
+        />
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        {uis.map((ui) => (
+          <ProjectCard
+            key={ui.id}
+            ui={ui}
+            onClick={() => router.push(`ui/${ui.id}`)}
+          />
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="min-h-screen bg-background dark:bg-background">
       <Header />
-      <div className="max-w-7xl mx-auto pt-5">
+      <div className="container mx-auto p-4">
         <Tabs
           defaultValue={mode}
-          className="w-full mb-4"
+          className="w-full space-y-6"
           onValueChange={handleTabChange}
         >
-          <div className="flex justify-between py-2 ">
-            <h1 className="text-3xl font-bold">Explore</h1>
-            <div className="flex gap-4">
-              {mode !== 'latest' && (
-                <Select
-                  onValueChange={handleTimeRangeChange}
-                  defaultValue={timeRange}
-                >
-                  <SelectTrigger className="w-[180px] h-10 rounded-lg shadow-sm p-2 px-1focus-visible:outline-none">
-                    <SelectValue placeholder="Select time range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1h">Last 1 Hour</SelectItem>
-                    <SelectItem value="24h">Last 24 Hours</SelectItem>
-                    <SelectItem value="7d">This Week</SelectItem>
-                    <SelectItem value="30d">This Month</SelectItem>
-                    <SelectItem value="all">All Time</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-              <TabsList className="bg-gray-300 rounded-lg shadow-sm p-2 px-1 h-10">
-                <TabsTrigger
-                  value="latest"
-                  className="px-4 py-2 text-sm font-medium"
-                >
-                  Latest
-                </TabsTrigger>
-                <TabsTrigger
-                  value="most_viewed"
-                  className="px-4 py-2 text-sm font-medium"
-                >
-                  Most Viewed
-                </TabsTrigger>
-                <TabsTrigger
-                  value="most_liked"
-                  className="px-4 py-2 text-sm font-medium"
-                >
-                  Most Liked
-                </TabsTrigger>
+          <div className="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground dark:text-foreground">
+              Explore
+            </h1>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <TabsList className="h-9 bg-muted/60 dark:bg-muted/60 backdrop-blur-sm rounded-lg p-1 flex-1 sm:flex-initial">
+                {['latest', 'most_viewed', 'most_liked'].map((tab) => (
+                  <TabsTrigger
+                    key={tab}
+                    value={tab}
+                    className="relative h-7 rounded-md px-3 text-sm font-medium transition-all
+                    disabled:pointer-events-none disabled:opacity-50
+                    data-[state=active]:bg-background dark:data-[state=active]:bg-background
+                    data-[state=active]:text-foreground dark:data-[state=active]:text-foreground
+                    data-[state=active]:shadow-sm"
+                  >
+                    {tab
+                      .split('_')
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1),
+                      )
+                      .join(' ')}
+                  </TabsTrigger>
+                ))}
               </TabsList>
+              <TimeRangeSelect />
             </div>
           </div>
 
-          <TabsContent value={mode}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {uis?.map((ui) => (
-                <Card
-                  key={ui.id}
-                  className="bg-white rounded-xl shadow-md overflow-hidden"
-                >
-                  <div
-                    onClick={() => router.push(`ui/${ui.id}`)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        router.push(`ui/${ui.id}`);
-                      }
-                    }}
-                    className="w-full h-48 relative cursor-pointer"
-                  >
-                    <Image
-                      src={ui.img}
-                      alt={ui.prompt}
-                      className="object-cover"
-                      fill
-                    />
-                  </div>
-                  <CardContent className="p-2 flex items-center">
-                    <div className="flex items-start flex-grow min-w-0 relative">
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Avatar
-                            onClick={() =>
-                              router.push(`/generations/${ui?.user?.username}`)
-                            }
-                            className="border-2 border-primary h-5 w-5"
-                          >
-                            <AvatarImage src={ui.user.imageUrl ?? ''} />
-                            <AvatarFallback>
-                              {ui.user.username.substring(0, 2)}
-                            </AvatarFallback>
-                          </Avatar>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{ui.user.username}</p>
-                        </TooltipContent>
-                      </Tooltip>
-
-                      <Tooltip>
-                        <TooltipTrigger className="rounded-full font-semibold ml-2 flex-1 text-ellipsis overflow-hidden whitespace-nowrap">
-                          <PromptBadge
-                            variant={'secondary'}
-                            className="rounded-full font-semibold flex text-ellipsis overflow-hidden whitespace-nowrap"
-                            prompt={ui.prompt}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{ui.prompt}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <div className="flex items-center whitespace-nowrap ml-2 flex-shrink-0">
-                      <Badge
-                        variant={'secondary'}
-                        className="flex items-center rounded-s-full font-semibold px-2"
-                      >
-                        <Eye className="h-4 w-4 mr-1" />
-                        <p className="text-xs text-gray-600">{ui.viewCount}</p>
-                      </Badge>
-                      <Badge
-                        variant={'secondary'}
-                        className="flex items-center rounded-e-full font-semibold px-2"
-                      >
-                        <Heart className="h-4 w-4 mr-1" />
-                        <p className="text-xs text-gray-600">{ui.likesCount}</p>
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-gray-600 whitespace-nowrap ml-2 flex-shrink-0">
-                      {timeAgo(ui.createdAt)}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-              {isLoading &&
-                [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-                  <Card
-                    key={i}
-                    className="bg-white rounded-xl shadow-md overflow-hidden animate-pulse"
-                  >
-                    <div className="relative">
-                      <div className="w-full h-48 bg-gray-200" />
-                    </div>
-                    <CardContent className="p-2 flex items-center">
-                      <div className="flex items-center flex-grow min-w-0 relative">
-                        <div className="w-5 h-5 bg-gray-200 rounded-full" />
-                        <div className="w-20 h-5 bg-gray-200 rounded-full ml-2" />
-                      </div>
-                      <div className="w-16 h-5 bg-gray-200 rounded-full" />
-                    </CardContent>
-                  </Card>
-                ))}
-            </div>
+          <TabsContent value={mode} className="mt-0 relative min-h-[300px]">
+            {renderContent()}
           </TabsContent>
         </Tabs>
       </div>
@@ -264,4 +219,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default ExplorePage;
