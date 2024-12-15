@@ -5,7 +5,7 @@ import './globals.css';
 import MAINTENANCE from '@/app/maintenance/page';
 import AuthModal from '@/components/auth-modal';
 import Header from '@/components/header';
-import { TooltipProvider } from '@/components/ui';
+import { ScrollArea, TooltipProvider } from '@/components/ui';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from 'next-themes';
@@ -64,24 +64,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SessionProvider>
-      <TooltipProvider>
-        <html lang="en" className="h-full antialiased" suppressHydrationWarning>
-          <head>
-            <Script
-              type="module"
-              src={
-                'https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js'
-              }
-              strategy="afterInteractive"
-            />
-            <Script
-              noModule
-              src={'https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js'}
-              strategy="afterInteractive"
-            />
-          </head>
-          <body className={cn(geist.className, 'h-full')}>
+    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <Script
+          type="module"
+          src={'https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js'}
+          strategy="afterInteractive"
+          async
+        />
+        <Script
+          noModule
+          src={'https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js'}
+          strategy="afterInteractive"
+          async
+        />
+      </head>
+      <body className={cn(geist.className, 'min-h-screen')}>
+        <SessionProvider>
+          <TooltipProvider>
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
@@ -92,16 +92,19 @@ export default function RootLayout({
               {process.env.MAINTENANCE === 'MAINTENANCE' ? (
                 <MAINTENANCE />
               ) : (
-                <>
+                <div className="relative flex min-h-screen flex-col">
                   <Header />
-                  {children}
+                  <ScrollArea className="flex-1 h-[calc(100vh-4rem)]">
+                    <main className="flex-1">{children}</main>
+                  </ScrollArea>
                   <AuthModal />
-                </>
+                  <Toaster />
+                </div>
               )}
             </ThemeProvider>
-          </body>
-        </html>
-      </TooltipProvider>
-    </SessionProvider>
+          </TooltipProvider>
+        </SessionProvider>
+      </body>
+    </html>
   );
 }
