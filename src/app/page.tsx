@@ -17,7 +17,9 @@ import {
 import { useAuthModal } from '@/hooks/useAuthModal';
 import { useModel } from '@/hooks/useModel';
 import { useUIState } from '@/hooks/useUIState';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
+  ArrowUp,
   Image as ImageIcon,
   InfoIcon,
   LoaderCircle,
@@ -150,6 +152,68 @@ export default function Home() {
             dark:shadow-lg dark:shadow-primary/5"
           >
             <div className="relative">
+              <AnimatePresence>
+                {selectedImage && (
+                  <motion.div
+                    initial={{
+                      height: 0,
+                      opacity: 0,
+                    }}
+                    animate={{
+                      height: 'auto',
+                      opacity: 1,
+                    }}
+                    exit={{
+                      height: 0,
+                      opacity: 0,
+                    }}
+                    transition={{
+                      type: 'spring',
+                      damping: 25,
+                      stiffness: 200,
+                    }}
+                    className="bg-background/50 relative rounded-t-xl text-gray-600 ring-2 ring-primary/20 overflow-hidden"
+                  >
+                    <div className="flex items-center gap-3 p-3">
+                      <div className="relative h-10 w-[150px] shrink-0">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={removeImage}
+                          className="rounded-full h-4 w-4 absolute top-[-5px] right-[-5px]"
+                        >
+                          <X className="h-2 w-2" />
+                        </Button>
+                        <div className="inline-flex w-full cursor-pointer items-center gap-1 rounded-lg border border-border/50 bg-background/50 px-1 py-1 hover:bg-muted/70 transition-all duration-200">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-muted">
+                            {imageBase64 ? (
+                              <Image
+                                width={32}
+                                height={32}
+                                src={imageBase64}
+                                alt="Preview"
+                                className="rounded-sm object-cover border border-border/50"
+                              />
+                            ) : (
+                              <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </div>
+
+                          <div className="grid flex-1 gap-0.5 py-0.5 text-xs leading-none text-muted-foreground">
+                            <div className="truncate font-medium pr-6">
+                              {selectedImage.name}
+                            </div>
+                            <div className="text-xs text-muted-foreground font-normal">
+                              {Math.round(selectedImage.size / 1024)}kb
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <Textarea
                 value={input}
                 placeholder="Describe your UI component... (Press Enter to submit, Shift + Enter for new line)"
@@ -173,7 +237,7 @@ export default function Home() {
                 dark:bg-background/40 dark:border-border/50"
               >
                 <div className="p-2 flex items-center gap-2">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-1">
                     <input
                       type="file"
                       accept="image/*"
@@ -182,40 +246,16 @@ export default function Home() {
                       ref={fileInputRef}
                     />
                     <Button
-                      variant="ghost"
-                      size="sm"
+                      variant="outline"
+                      size="icon"
                       onClick={() => fileInputRef.current?.click()}
                       className="h-8 px-2 text-muted-foreground hover:text-foreground"
                     >
                       <ImageIcon className="h-4 w-4" />
                     </Button>
 
-                    {selectedImage && (
-                      <div className="flex items-center gap-1 bg-muted/50 rounded-md px-2 py-1">
-                        <Image
-                          width={16}
-                          height={16}
-                          src={imageBase64}
-                          alt="Preview"
-                          className="rounded"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={removeImage}
-                          className="h-4 w-4 p-0 hover:bg-transparent text-muted-foreground"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="h-6 w-px bg-border" />
-
-                  <div className="flex items-center gap-2 flex-1">
                     <Select onValueChange={setUIType} value={uiType}>
-                      <SelectTrigger className="h-8 w-[110px] border-none bg-transparent">
+                      <SelectTrigger className="w-[110px]">
                         <SelectValue placeholder="Framework" />
                       </SelectTrigger>
                       <SelectContent>
@@ -225,7 +265,7 @@ export default function Home() {
                     </Select>
 
                     <Select defaultValue="ionicons">
-                      <SelectTrigger className="h-8 w-[100px] border-none bg-transparent">
+                      <SelectTrigger className="w-[100px]">
                         <SelectValue placeholder="Icons" />
                       </SelectTrigger>
                       <SelectContent>
@@ -240,8 +280,8 @@ export default function Home() {
                     </Select>
 
                     <Button
-                      variant="ghost"
-                      size="sm"
+                      variant="outline"
+                      size="icon"
                       onClick={() => router.push('/settings/llm')}
                       className="h-8 px-2 text-muted-foreground hover:text-foreground"
                     >
@@ -253,7 +293,7 @@ export default function Home() {
                     {loading ? (
                       <LoaderCircle className="h-4 w-4 animate-spin" />
                     ) : (
-                      <SendHorizontal className="h-4 w-4" />
+                      <ArrowUp className="h-4 w-4" />
                     )}
                   </Button>
                 </div>
