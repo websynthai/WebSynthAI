@@ -1,5 +1,5 @@
 import { signOutGithub } from '@/actions/auth/sign-out';
-import { LogOut, Settings, SquareLibrary } from 'lucide-react';
+import { BugIcon, LogOut, Settings, SquareLibrary } from 'lucide-react';
 import type { User } from 'next-auth';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -43,6 +43,17 @@ export default function UserButton({ user }: UserButtonProps) {
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>@{user.username}</DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <Link
+            href="https://github.com/SujalXplores/v0.diy/issues/new"
+            target="_blank"
+          >
+            <DropdownMenuItem className="cursor-pointer">
+              <BugIcon className="mr-2 h-4 w-4" />
+              <span>Report an issue</span>
+            </DropdownMenuItem>
+          </Link>
+        </DropdownMenuGroup>
         <DropdownMenuGroup>
           <Link href={`/generations/${user.username}`} passHref>
             <DropdownMenuItem className="cursor-pointer">
