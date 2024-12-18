@@ -1,18 +1,18 @@
 export const timeAgo = (date: Date): string => {
+  const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
   const now = new Date();
   const diffInMs = now.getTime() - date.getTime();
   const diffInSec = Math.floor(diffInMs / 1000);
-  const diffInMin = Math.floor(diffInSec / 60);
-  const diffInHr = Math.floor(diffInMin / 60);
 
+  // Convert to the appropriate unit and return formatted string
   if (diffInSec < 60) {
-    return `${diffInSec} sec ago`;
+    return rtf.format(-diffInSec, 'second');
   }
-  if (diffInMin < 60) {
-    return `${diffInMin} min ago`;
+  if (diffInSec < 3600) {
+    return rtf.format(-Math.floor(diffInSec / 60), 'minute');
   }
-  if (diffInHr < 24) {
-    return `${diffInHr} hr ago`;
+  if (diffInSec < 86400) {
+    return rtf.format(-Math.floor(diffInSec / 3600), 'hour');
   }
-  return date.toLocaleDateString(); // Returns the date in the local format
+  return rtf.format(-Math.floor(diffInSec / 86400), 'day');
 };
