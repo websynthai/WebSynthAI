@@ -23,7 +23,7 @@ const ProjectCard = ({ ui, onClick }: { ui: UI; onClick: () => void }) => {
             className={cn(
               ui.img
                 ? 'object-cover object-top'
-                : 'object-contain p-8 bg-[#eaeaea]',
+                : 'object-contain bg-[#eaeaea]',
             )}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
