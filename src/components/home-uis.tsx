@@ -21,7 +21,7 @@ const HomeUICards = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+      <div className="mx-auto grid w-full grid-cols-[repeat(auto-fit,_minmax(296px,1fr))] gap-4">
         {uis.map((ui) => (
           <ProjectCard
             key={ui.id}
