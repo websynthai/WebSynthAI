@@ -69,10 +69,31 @@ const ReactLiveContent = ({
 
   if (!scope || !codeString) {
     return (
-      <div className="animate-pulse space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-3/4" />
-        <div className="h-4 bg-gray-200 rounded w-1/2" />
-        <div className="h-4 bg-gray-200 rounded w-full" />
+      <div className="flex items-center justify-center min-h-[300px] p-6">
+        <div className="w-full space-y-8 bg-gray-800/5 rounded-lg p-6">
+          {/* Header area */}
+          <div className="space-y-4">
+            <div className="h-8 bg-[length:200%_100%] bg-gradient-to-r from-gray-800/5 via-gray-800/20 to-gray-800/5 animate-loading-shine rounded-md w-3/4" />
+            <div className="flex gap-2">
+              <div className="h-4 bg-[length:200%_100%] bg-gradient-to-r from-gray-800/5 via-gray-800/20 to-gray-800/5 animate-loading-shine rounded-md w-24" />
+              <div className="h-4 bg-[length:200%_100%] bg-gradient-to-r from-gray-800/5 via-gray-800/20 to-gray-800/5 animate-loading-shine rounded-md w-24" />
+            </div>
+          </div>
+
+          {/* Content area */}
+          <div className="space-y-4">
+            <div className="flex gap-4">
+              <div className="h-20 bg-[length:200%_100%] bg-gradient-to-r from-gray-800/5 via-gray-800/20 to-gray-800/5 animate-loading-shine rounded-md w-40" />
+              <div className="h-20 bg-[length:200%_100%] bg-gradient-to-r from-gray-800/5 via-gray-800/20 to-gray-800/5 animate-loading-shine rounded-md w-40" />
+            </div>
+          </div>
+
+          {/* Footer/actions area */}
+          <div className="flex justify-end gap-3">
+            <div className="h-9 bg-[length:200%_100%] bg-gradient-to-r from-gray-800/5 via-gray-800/20 to-gray-800/5 animate-loading-shine rounded-md w-24" />
+            <div className="h-9 bg-[length:200%_100%] bg-gradient-to-r from-gray-800/5 via-gray-800/20 to-gray-800/5 animate-loading-shine rounded-md w-24" />
+          </div>
+        </div>
       </div>
     );
   }
