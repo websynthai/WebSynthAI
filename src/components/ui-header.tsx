@@ -8,7 +8,6 @@ import { toast } from 'sonner';
 import PromptBadge from './prompt-badge';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { Separator } from './ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 const UIHeader = ({
@@ -37,7 +36,7 @@ const UIHeader = ({
     setIsForking(true);
     try {
       const forkedUI = await forkUI(uiId, userId);
-      toast.success('UI forked successfully');
+      toast.success('Fork created! Time to make it unique 🎨');
       router.push(`/ui/${forkedUI.id}`);
     } catch (error) {
       console.error('Error forking UI:', error);
@@ -50,14 +49,6 @@ const UIHeader = ({
   return (
     <div className="w-full bg-white flex justify-between items-center p-4">
       <div className="flex space-x-2 h-8 items-center">
-        <Button
-          onClick={() => router.push('/')}
-          variant={'ghost'}
-          className="text-xl font-bold p-0"
-        >
-          v0.diy
-        </Button>
-        <Separator orientation="vertical" />
         <Tooltip>
           <TooltipTrigger className="rounded-full font-semibold ml-2 flex-1 text-ellipsis overflow-hidden whitespace-nowrap">
             <PromptBadge
@@ -74,7 +65,7 @@ const UIHeader = ({
           <LockOpen size={14} />
           <p>Public</p>
         </Badge>
-        {forkedFrom && (
+        {forkedFrom ? (
           <Badge
             onClick={() => router.push(`/ui/${forkedFrom}`)}
             variant={'outline'}
@@ -83,7 +74,7 @@ const UIHeader = ({
             <GitFork size={14} />
             <p>From : {forkedFrom}</p>
           </Badge>
-        )}
+        ) : null}
       </div>
       <div className="flex space-x-2 h-8 items-center">
         {status === 'authenticated' && (
@@ -93,7 +84,7 @@ const UIHeader = ({
             className="rounded-3xl"
             disabled={isForking || loading}
           >
-            {isForking ? 'Forking...' : 'Fork UI'}
+            {isForking ? 'Forking...' : 'Fork'}
           </Button>
         )}
         <Button
