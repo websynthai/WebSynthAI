@@ -4,7 +4,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import UserButton from '@/components/user-button';
 import { cn } from '@/lib/utils';
-import { CompassIcon, FileClockIcon, GithubIcon } from 'lucide-react';
+import { CompassIcon, GithubIcon } from 'lucide-react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -13,11 +13,6 @@ const NAVIGATION_ITEMS = [
     label: 'Explore',
     path: '/explore',
     icon: CompassIcon,
-  },
-  {
-    label: 'Changelogs',
-    path: '/changelog',
-    icon: FileClockIcon,
   },
 ] as const;
 
@@ -50,7 +45,10 @@ const Header = () => {
                 className="rounded-sm transition-transform duration-200"
               />
             </div>
-            <span className="hidden bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent sm:inline">
+            <span
+              className="hidden bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent sm:inline"
+              translate="no"
+            >
               v0.diy
             </span>
           </Button>
