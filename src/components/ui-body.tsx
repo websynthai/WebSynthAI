@@ -1,9 +1,7 @@
 'use client';
-import { type LegacyRef, forwardRef, useEffect, useRef, useState } from 'react';
-import type {
-  ImperativePanelGroupHandle,
-  ImperativePanelHandle,
-} from 'react-resizable-panels';
+
+import { type LegacyRef, forwardRef } from 'react';
+import type { ImperativePanelGroupHandle } from 'react-resizable-panels';
 import PreviewScreen from './preview-screen';
 import {
   ResizableHandle,
@@ -21,29 +19,18 @@ const UIBody = forwardRef(
     },
     ref: LegacyRef<ImperativePanelGroupHandle>,
   ) => {
-    const [layout, setLayout] = useState<number[] | null | undefined>();
-    const panelRef = useRef<ImperativePanelHandle>(null);
-
-    useEffect(() => {
-      const panel = panelRef?.current;
-      if (!panel) return;
-      if (!layout) return;
-      panel.resize(layout[2]);
-    }, [layout?.[2]]);
-
     return (
       <div className="flex flex-1">
         <ResizablePanelGroup
-          onLayout={setLayout}
           className="bg-white rounded-b-xl"
           ref={ref}
           direction="horizontal"
         >
-          <ResizablePanel ref={panelRef} defaultSize={0} order={1} />
-          <ResizableHandle disabled={true} />
+          <ResizablePanel defaultSize={20} minSize={0} order={1} />
+          <ResizableHandle withHandle />
           <ResizablePanel
-            minSize={26}
-            defaultSize={100}
+            defaultSize={60}
+            minSize={40}
             className="bg-secondary relative"
             order={2}
           >
@@ -53,13 +40,15 @@ const UIBody = forwardRef(
             <div
               id="captureDiv"
               ref={props.captureRef}
-              className={`max-h-[75vh] h-[75vh] ${props.isloading ? 'overflow-y-hidden' : 'overflow-y-auto'}`}
+              className={`max-h-[75vh] h-[75vh] ${
+                props.isloading ? 'overflow-y-hidden' : 'overflow-y-auto'
+              }`}
             >
               <PreviewScreen html_code={props.code} uiType={props.uiType} />
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={0} order={3} />
+          <ResizablePanel defaultSize={20} minSize={0} order={3} />
         </ResizablePanelGroup>
       </div>
     );

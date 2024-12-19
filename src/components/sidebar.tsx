@@ -1,56 +1,9 @@
 'use client';
 import { useSidebar } from '@/hooks/useSidebar';
-import { isParent } from '@/lib/helper';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, LoaderCircle } from 'lucide-react';
-import React, { useState } from 'react';
-import { Button } from './ui';
-
-// Function to generate a color based on the SUBId
-const generateColor = (subId: string) => {
-  const hashString = (str: string): number => {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char * char;
-      hash |= 0;
-    }
-    return Math.abs(hash);
-  };
-
-  const hash = hashString(subId);
-  const hue = hash % 360;
-  const saturation = '100%';
-  const lightness = '80%';
-  return `hsl(${hue}, ${saturation}, ${lightness})`;
-};
-
-function getPredecessor(str: string) {
-  if (!str) return 'a-0';
-  const parts = str.split('-');
-
-  if (parts.length === 2 && parts[1] === '1') {
-    return `${parts[0]}-0`;
-  }
-
-  while (parts.length > 1 && parts[parts.length - 1] === '1') {
-    parts.pop();
-
-    if (parts.length === 1) {
-      return `${parts[0]}-0`;
-    }
-  }
-
-  const lastPart = parts.pop();
-  if (!lastPart) return `${parts[0]}-0`;
-  const numericLastPart = Number.parseInt(lastPart, 10);
-
-  if (!Number.isNaN(numericLastPart) && numericLastPart > 0) {
-    return `${parts.join('-')}-${numericLastPart - 1}`;
-  }
-
-  return `${parts.join('-') || parts[0]}-0`;
-}
+import { ChevronsLeft } from 'lucide-react';
+import { useState } from 'react';
+import { VersionPreview } from './version-preview';
 
 export default function Sidebar({ subPrompts, setVersion, subid }: any) {
   const { isOpen, toggle } = useSidebar();
@@ -62,78 +15,72 @@ export default function Sidebar({ subPrompts, setVersion, subid }: any) {
     setTimeout(() => setStatus(false), 500);
   };
 
-  if (!subPrompts) return <div />;
+  if (!subPrompts) return null;
 
   return (
-    <nav
+    <div
       className={cn(
-        'relative hidden h-screen border-r pt-10 md:block',
+        'hidden shrink-0 origin-left select-none flex-col overflow-hidden rounded-lg bg-gray-50 py-2 transition-all duration-300 ease-out @container lg:flex max-h-[calc(100vh-120px)] h-fit',
         status && 'duration-200',
-        isOpen ? 'w-44' : 'w-[50px]',
+        isOpen ? 'w-[138px]' : 'w-[44px]',
       )}
     >
-      <ArrowLeft
-        size={22}
-        className={cn(
-          'absolute -right-3 top-0 cursor-pointer rounded-full border bg-background text-3xl text-foreground transition-transform duration-500',
-          !isOpen && 'rotate-180',
-        )}
-        onClick={handleToggle}
-      />
-      <div className="px-3 py-2 flex justify-center h-[80vh] overflow-y-auto">
-        <div className="flex flex-col space-y-4">
-          {subPrompts.map((subPrompt: any, i: number) => {
-            const rightColor = generateColor(subPrompt[0].SUBId);
-            const leftColor = generateColor(getPredecessor(subPrompt[0].SUBId));
-
-            return (
-              <Button
-                key={subPrompt[0].id}
-                onClick={() => setVersion(subPrompt[0].SUBId)}
-                variant={
-                  subid?.endsWith('0')
-                    ? 'outline'
-                    : subid === subPrompt[0].SUBId
-                      ? 'outline'
-                      : 'secondary'
-                }
-                className={cn(
-                  'text-xs font-bold  relative overflow-hidden transition-all duration-200',
-                  isOpen ? 'w-40' : 'w-[44px]',
-                  subid === subPrompt[0].SUBId ? 'ring-2 ring-white' : '',
-                )}
-                title={`Subid: ${subPrompt[0].id}`}
-              >
-                {isOpen && (
-                  <div className="absolute inset-0 z-0">
-                    <div
-                      className="h-full w-1/2 float-left"
-                      style={{ backgroundColor: leftColor }}
-                    />
-                    <div
-                      className="h-full w-1/2 float-right"
-                      style={{ backgroundColor: rightColor }}
-                    />
-                  </div>
-                )}
-                <span className="relative z-10">
-                  {i === 0 ? 'V1' : subPrompt[0].SUBId}
-                </span>
-              </Button>
-            );
-          })}
-          {subid === '1' && (
-            <Button
-              onClick={() => setVersion('0')}
-              className="text-xs font-bold text-white relative overflow-hidden"
-            >
-              <span className="relative z-10">
-                <LoaderCircle className="h-4 w-4 ml-1 animate-spin" />
-              </span>
-            </Button>
+      <div className="flex h-full flex-col">
+        <div
+          className={cn(
+            'flex items-center transition-transform duration-300 ease-out px-2 pb-3',
+            !isOpen && 'px-[6px]',
           )}
+        >
+          {isOpen && (
+            <h2 className="text-sm font-medium text-gray-700 transition-all duration-300 opacity-100">
+              History
+            </h2>
+          )}
+          <button
+            type="button"
+            onClick={handleToggle}
+            className={cn(
+              'inline-flex shrink-0 items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-gray-500 rounded-sm hover:bg-gray-200 hover:text-gray-700 h-6 w-8',
+              isOpen && 'h-4 w-4 ml-auto',
+            )}
+          >
+            <ChevronsLeft
+              className={cn(
+                'h-4 w-4 text-gray-600 transition-transform duration-200',
+                !isOpen && 'rotate-180',
+              )}
+            />
+            <span className="sr-only">Toggle sidebar</span>
+          </button>
+        </div>
+
+        <div className="no-scrollbar flex flex-1 flex-col overflow-auto">
+          <div className="flex flex-col gap-3 px-[6px]">
+            {subPrompts.map((subPrompt: any, i: number) => (
+              <VersionPreview
+                key={subPrompt[0].id}
+                id={subPrompt[0].SUBId}
+                img={subPrompt[0].img}
+                isActive={subid === subPrompt[0].SUBId}
+                isOpen={isOpen}
+                onClick={() => setVersion(subPrompt[0].SUBId)}
+                index={i}
+              />
+            ))}
+            {subid === '1' && (
+              <VersionPreview
+                id="generating"
+                isActive={false}
+                isOpen={isOpen}
+                onClick={() => setVersion('0')}
+                index={subPrompts.length}
+                loading={true}
+              />
+            )}
+          </div>
         </div>
       </div>
-    </nav>
+    </div>
   );
 }

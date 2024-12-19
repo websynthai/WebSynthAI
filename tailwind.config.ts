@@ -76,12 +76,21 @@ const config = {
           '50%': { backgroundPosition: '100% 50%' },
           '100%': { backgroundPosition: '0% 50%' },
         },
+        shimmer: {
+          '0%': {
+            backgroundPosition: '-700px 0',
+          },
+          '100%': {
+            backgroundPosition: '700px 0',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'caret-blink': 'caret-blink 1.25s ease-out infinite',
         gradient: 'gradient 4s ease-in-out infinite',
+        shimmer: 'shimmer 2s linear infinite',
       },
       supports: {
         'backdrop-filter': 'backdrop-filter',

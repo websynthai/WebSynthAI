@@ -311,3 +311,8 @@
 .aspect-preview {
   aspect-ratio: 16/9;
 }
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
