@@ -16,8 +16,8 @@ import type { LucideIcon } from 'lucide-react';
 import type { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import React from 'react';
+import { redirect } from 'next/navigation';
+import { Fragment } from 'react';
 
 type MenuItem = {
   icon: LucideIcon;
@@ -76,13 +76,12 @@ const SignInButton = ({ onClick }: { onClick: () => void }) => (
 );
 
 export default function UserButton() {
-  const router = useRouter();
   const { toggle: toggleAuth } = useAuthModal();
   const { data: session, status } = useSession();
 
   const handleSignOut = async () => {
     await signOutGithub();
-    router.push('/');
+    redirect('/');
   };
 
   if (status === 'loading') return <LoadingState />;
@@ -107,7 +106,7 @@ export default function UserButton() {
         <DropdownMenuSeparator />
 
         {MENU_ITEMS.map((group, groupIndex) => (
-          <React.Fragment key={group.group}>
+          <Fragment key={group.group}>
             <DropdownMenuGroup>
               {group.items.map(
                 ({ icon: Icon, label, href, external, needsUsername }) => (
@@ -129,7 +128,7 @@ export default function UserButton() {
               )}
             </DropdownMenuGroup>
             {groupIndex < MENU_ITEMS.length - 1 && <DropdownMenuSeparator />}
-          </React.Fragment>
+          </Fragment>
         ))}
 
         <DropdownMenuSeparator />

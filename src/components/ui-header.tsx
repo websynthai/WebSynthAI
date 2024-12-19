@@ -10,7 +10,6 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import UserButton from './user-button';
 
 const UIHeader = ({
   mainPrompt,
@@ -104,14 +103,6 @@ const UIHeader = ({
         >
           New Generation
         </Button>
-        {status === 'unauthenticated' && (
-          <Button onClick={() => toggle()} variant="default">
-            Sign In
-          </Button>
-        )}
-        {status === 'authenticated' && session.user && (
-          <UserButton user={session.user} />
-        )}
       </div>
     </div>
   );
