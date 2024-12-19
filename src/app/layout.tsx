@@ -1,6 +1,6 @@
 import './globals.css';
 
-import MAINTENANCE from '@/app/maintenance/page';
+import Maintenance from '@/app/maintenance/page';
 import AuthModal from '@/components/auth-modal';
 import Header from '@/components/header';
 import { TooltipProvider } from '@/components/ui';
@@ -90,7 +90,7 @@ export default function RootLayout({
             >
               <Toaster richColors expand />
               {process.env.MAINTENANCE === 'MAINTENANCE' ? (
-                <MAINTENANCE />
+                <Maintenance />
               ) : (
                 <>
                   <Header />

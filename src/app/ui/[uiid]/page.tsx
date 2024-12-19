@@ -16,7 +16,7 @@ import { useUIState } from '@/hooks/useUIState';
 import { isParent } from '@/lib/helper';
 import { isModelSupported } from '@/lib/supportedllm';
 import html2canvas from 'html2canvas';
-import { LoaderCircle, SendHorizontal } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { use, useEffect, useRef, useState } from 'react';
@@ -1446,6 +1446,8 @@ const UI = (props: { params: Promise<any> }) => {
     }
   };
 
+  console.info(ui);
+
   return (
     <div className="overflow-hidden h-screen">
       <UIHeader
@@ -1454,13 +1456,13 @@ const UI = (props: { params: Promise<any> }) => {
         uiId={uiid}
         forkedFrom={ui?.forkedFrom ?? ''}
       />
-      <div className="flex h-screen border-collapse overflow-hidden">
+      <div className="flex flex-1 flex-row gap-3 bg-white border-t lg:border-t-0 p-4 pb-2 pt-3 lg:pt-0">
         <Sidebar
           subid={selectedVersion.subid}
           setVersion={setVersion}
           subPrompts={ui?.subPrompts}
         />
-        <div className="flex-1 px-4 py-2 space-y-2">
+        <div className="flex-1">
           <Card className="flex flex-col bg-secondary">
             <div className="flex justify-between items-center">
               <UIRigthHeader
@@ -1499,29 +1501,42 @@ const UI = (props: { params: Promise<any> }) => {
             />
           </Card>
           {status === 'authenticated' && ui?.userId === userId && (
-            <Card className="flex w-full max-w-lg space-x-2 bg-black items-center m-auto">
+            <form
+              className="flex w-full max-w-lg m-auto mt-2 relative"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (loading) return;
+                await generateCode();
+              }}
+            >
               <Input
                 disabled={loading}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 type="text"
-                placeholder="Type a message..."
-                className="flex-grow rounded-full bg-black px-6 py-4 text-sm text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 border-0 focus-visible:border-0 "
+                placeholder="Make my ui more beautiful..."
+                className="w-full pr-12 px-3 py-2 text-sm
+                  text-foreground placeholder:text-muted-foreground
+                  bg-background/50
+                  border border-input hover:border-ring
+                  rounded-md transition-colors duration-200"
+                autoComplete="off"
+                spellCheck={false}
               />
               <Button
+                className="absolute right-0 top-0"
                 disabled={loading}
-                onClick={() => generateCode()}
                 variant="ghost"
                 size="icon"
-                className="rounded-md w-12 h-12 text-gray-200 bg-black hover:bg-black hover:text-gray-600"
+                type="submit"
               >
                 {loading ? (
-                  <LoaderCircle className="h-4 w-4 ml-1 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <SendHorizontal />
+                  <ArrowRight className="h-4 w-4" />
                 )}
               </Button>
-            </Card>
+            </form>
           )}
         </div>
       </div>
