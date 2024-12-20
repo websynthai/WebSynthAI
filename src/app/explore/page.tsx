@@ -21,14 +21,106 @@ import type { UI } from '@/types/user';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+type Filters = {
+  mode: string;
+  timeRange: string;
+};
+
+type ExploreState = {
+  uis: UI[];
+  start: number;
+  isLoading: boolean;
+  maxReached: boolean;
+};
+
+const TimeRangeSelect = ({
+  filters,
+  onValueChange,
+}: {
+  filters: Filters;
+  onValueChange: (value: string) => void;
+}) => {
+  if (filters.mode === 'latest') return null;
+
+  return (
+    <Select onValueChange={onValueChange} defaultValue={filters.timeRange}>
+      <SelectTrigger className="w-[140px] md:w-[180px] h-9 rounded-lg bg-background dark:bg-background border-border dark:border-border focus-visible:ring-primary/20 dark:focus-visible:ring-primary/20">
+        <SelectValue placeholder="Time Range" />
+      </SelectTrigger>
+      <SelectContent>
+        {TIME_RANGES.map((range) => (
+          <SelectItem key={range.value} value={range.value}>
+            {range.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
+
+const ProjectGrid = ({
+  uis,
+  isLoading,
+  onClick,
+}: {
+  uis: UI[];
+  isLoading: boolean;
+  onClick: (id: string) => void;
+}) => (
+  <div className="mx-auto grid w-full grid-cols-[repeat(auto-fit,_minmax(296px,1fr))] gap-4">
+    {uis.map((ui) => (
+      <ProjectCard key={ui.id} ui={ui} onClick={() => onClick(ui.id)} />
+    ))}
+    {isLoading && <LoadingSkeleton />}
+  </div>
+);
+
+const ExploreContent = ({
+  isLoading,
+  uis,
+  filters,
+  onProjectClick,
+}: {
+  isLoading: boolean;
+  uis: UI[];
+  filters: Filters;
+  onProjectClick: (id: string) => void;
+}) => {
+  if (isLoading && uis.length === 0) {
+    return (
+      <div className="mx-auto grid w-full grid-cols-[repeat(auto-fit,_minmax(296px,1fr))] gap-4">
+        <LoadingSkeleton />
+      </div>
+    );
+  }
+
+  if (!uis.length) {
+    return (
+      <EmptyState
+        type={
+          filters.timeRange !== 'all' || filters.mode !== 'latest'
+            ? 'no-results'
+            : 'no-projects'
+        }
+      />
+    );
+  }
+
+  return (
+    <ProjectGrid uis={uis} isLoading={isLoading} onClick={onProjectClick} />
+  );
+};
+
 const ExplorePage = () => {
   const router = useRouter();
-  const [filters, setFilters] = useState({
+
+  const [filters, setFilters] = useState<Filters>({
     mode: 'latest',
     timeRange: 'all',
   });
-  const [state, setState] = useState({
-    uis: [] as UI[],
+
+  const [state, setState] = useState<ExploreState>({
+    uis: [],
     start: 0,
     isLoading: true,
     maxReached: false,
@@ -55,7 +147,7 @@ const ExplorePage = () => {
     fetchUIs();
   }, [filters.mode, filters.timeRange, state.start]);
 
-  const resetAndUpdate = (key: keyof typeof filters) => (value: string) => {
+  const resetAndUpdate = (key: keyof Filters) => (value: string) => {
     setState({
       uis: [],
       start: 0,
@@ -72,60 +164,6 @@ const ExplorePage = () => {
   };
 
   useInfiniteScroll(handleLoadMore, state.isLoading, state.maxReached);
-
-  const TimeRangeSelect = () =>
-    filters.mode !== 'latest' && (
-      <Select
-        onValueChange={resetAndUpdate('timeRange')}
-        defaultValue={filters.timeRange}
-      >
-        <SelectTrigger className="w-[140px] md:w-[180px] h-9 rounded-lg bg-background dark:bg-background border-border dark:border-border focus-visible:ring-primary/20 dark:focus-visible:ring-primary/20">
-          <SelectValue placeholder="Time Range" />
-        </SelectTrigger>
-        <SelectContent>
-          {TIME_RANGES.map((range) => (
-            <SelectItem key={range.value} value={range.value}>
-              {range.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    );
-
-  const renderContent = () => {
-    if (state.isLoading && state.uis.length === 0) {
-      return (
-        <div className="mx-auto grid w-full grid-cols-[repeat(auto-fit,_minmax(296px,1fr))] gap-4">
-          <LoadingSkeleton />
-        </div>
-      );
-    }
-
-    if (!state.uis || state.uis.length === 0) {
-      return (
-        <EmptyState
-          type={
-            filters.timeRange !== 'all' || filters.mode !== 'latest'
-              ? 'no-results'
-              : 'no-projects'
-          }
-        />
-      );
-    }
-
-    return (
-      <div className="mx-auto grid w-full grid-cols-[repeat(auto-fit,_minmax(296px,1fr))] gap-4">
-        {state.uis.map((ui) => (
-          <ProjectCard
-            key={ui.id}
-            ui={ui}
-            onClick={() => router.push(`ui/${ui.id}`)}
-          />
-        ))}
-        {state.isLoading && <LoadingSkeleton />}
-      </div>
-    );
-  };
 
   return (
     <div className="min-h-screen bg-background dark:bg-background">
@@ -155,7 +193,10 @@ const ExplorePage = () => {
                   </TabsTrigger>
                 ))}
               </TabsList>
-              <TimeRangeSelect />
+              <TimeRangeSelect
+                filters={filters}
+                onValueChange={resetAndUpdate('timeRange')}
+              />
             </div>
           </div>
 
@@ -163,7 +204,12 @@ const ExplorePage = () => {
             value={filters.mode}
             className="mt-0 relative min-h-[300px]"
           >
-            {renderContent()}
+            <ExploreContent
+              isLoading={state.isLoading}
+              uis={state.uis}
+              filters={filters}
+              onProjectClick={(id) => router.push(`ui/${id}`)}
+            />
           </TabsContent>
         </Tabs>
       </div>
