@@ -2,6 +2,7 @@
 
 import { getUIs } from '@/actions/ui/get-uis';
 import ProjectCard from '@/components/project-card';
+import LoadingSkeleton from '@/components/project-skeleton';
 import {
   Select,
   SelectContent,
@@ -123,24 +124,10 @@ const ExplorePage = () => {
       </Select>
     );
 
-  const LoadingSkeleton = () =>
-    Array.from({ length: 9 }).map((_, i) => (
-      <div
-        key={i}
-        className="bg-card dark:bg-card rounded-xl shadow-sm dark:shadow-none border border-border dark:border-border overflow-hidden animate-pulse"
-      >
-        <div className="w-full aspect-[4/3] bg-muted dark:bg-muted" />
-        <div className="p-2 flex items-center">
-          <div className="w-5 h-5 bg-muted dark:bg-muted rounded-full" />
-          <div className="w-20 h-5 bg-muted dark:bg-muted rounded-full ml-2" />
-        </div>
-      </div>
-    ));
-
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="mx-auto grid w-full grid-cols-[repeat(auto-fit,_minmax(296px,1fr))] gap-4">
           <LoadingSkeleton />
         </div>
       );
@@ -159,7 +146,7 @@ const ExplorePage = () => {
     }
 
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="mx-auto grid w-full grid-cols-[repeat(auto-fit,_minmax(296px,1fr))] gap-4">
         {uis.map((ui) => (
           <ProjectCard
             key={ui.id}

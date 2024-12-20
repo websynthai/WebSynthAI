@@ -3,6 +3,7 @@
 import { getUIProfile } from '@/actions/ui/get-uis';
 import { getUser } from '@/actions/user';
 import ProjectCard from '@/components/project-card';
+import LoadingSkeleton from '@/components/project-skeleton';
 import {
   Avatar,
   AvatarFallback,
@@ -40,23 +41,6 @@ const EmptyState = ({ mode }: { mode: string }) => (
         : "This user hasn't liked any UIs yet."}
     </p>
   </div>
-);
-
-const LoadingSkeleton = () => (
-  <>
-    {Array.from({ length: 9 }).map((_, i) => (
-      <div
-        key={i}
-        className="bg-card rounded-xl shadow-sm border border-border overflow-hidden animate-pulse"
-      >
-        <div className="w-full aspect-[4/3] bg-muted" />
-        <div className="p-2 flex items-center">
-          <div className="w-5 h-5 bg-muted rounded-full" />
-          <div className="w-20 h-5 bg-muted rounded-full ml-2" />
-        </div>
-      </div>
-    ))}
-  </>
 );
 
 export default function ProfilePage(props: {
@@ -203,7 +187,7 @@ export default function ProfilePage(props: {
           </TabsList>
 
           <TabsContent value={mode} className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="mx-auto grid w-full grid-cols-[repeat(auto-fit,_minmax(296px,1fr))] gap-4">
               {isLoading ? (
                 <LoadingSkeleton />
               ) : uis.length === 0 ? (
