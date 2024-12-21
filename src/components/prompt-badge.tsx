@@ -1,30 +1,31 @@
-import React from 'react';
 import { toast } from 'sonner';
 import { Badge } from './ui';
 
-const PromptBadge = ({
-  className,
-  variant,
-  prompt,
-}: {
-  className: string;
-  variant:
-    | 'default'
-    | 'secondary'
-    | 'destructive'
-    | 'outline'
-    | null
-    | undefined;
+interface PromptBadgeProps {
+  className?: string;
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline';
   prompt: string;
+}
+
+const PromptBadge: React.FC<PromptBadgeProps> = ({
+  className = '',
+  variant = 'default',
+  prompt,
 }) => {
-  const copyPrompt = () => {
-    navigator.clipboard.writeText(prompt);
-    toast.info('Prompt copied to clipboard');
+  const copyPrompt = async () => {
+    try {
+      await navigator.clipboard.writeText(prompt);
+      toast.success('Prompt copied to clipboard');
+    } catch (_error) {
+      toast.error('Failed to copy prompt');
+    }
   };
 
   return (
-    <Badge variant={variant} className={className} onClick={() => copyPrompt()}>
-      <span className="truncate mr-1">{prompt}</span>
+    <Badge variant={variant} className={className} onClick={copyPrompt}>
+      <span className="truncate mr-1" title={prompt}>
+        {prompt}
+      </span>
     </Badge>
   );
 };
