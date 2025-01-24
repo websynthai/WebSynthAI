@@ -1,4 +1,14 @@
-# 🎨 v0.diy
+
+<div align="center">
+    
+[![PyPI - License](https://img.shields.io/pypi/l/agentlab?style=flat-square)]([https://opensource.org/licenses/MIT](http://www.apache.org/licenses/LICENSE-2.0))
+[![GitHub star chart](https://img.shields.io/github/stars/websynthai/WebSynthAI?style=flat-square)](https://star-history.com/#websynthai/WebSynthAI)
+[![Latest Release](https://img.shields.io/github/v/release/websynthai/WebSynthAI?style=flat-square)](https://github.com/websynthai/WebSynthAI/releases)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen?style=flat-square)](https://github.com/websynthai/WebSynthAI/issues)
+
+</div>
+
+# 🎨 WebSynthAI
 
 <div align="center">
   <h3>Your Open-Source AI UI Generator</h3>
@@ -13,9 +23,10 @@
   <a href="#-license">License</a>
 </div>
 
-## ✨ What is v0.diy?
+## ✨ What is WebSynthAI?
 
-v0.diy is an open-source alternative to v0.dev that puts the power of AI-driven UI generation in your hands. Create, customize, and manage UI components using your preferred frameworks and AI providers.
+WebSynthAI is an open-source tool that uses AI to build complete websites from a single prompt. While it works for many purposes, it’s particularly suited for creating DeFi dashboards, NFT marketplaces, and other crypto-related applications. With support for AI-powered Solana components and popular frameworks, WebSynthAI simplifies web development by automating the creation and customization of UI components.
+
 
 ### Key Highlights
 
