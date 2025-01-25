@@ -67,8 +67,8 @@ WebSynthAI is an open-source tool that uses AI to build complete websites from a
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/v0.diy.git
-cd v0.diy
+git clone https://github.com/yourusername/WebSynthAI.git
+cd WebSynthAI
 ```
 
 2. Install dependencies:
@@ -125,14 +125,3 @@ We welcome contributions! Check out our [Contributing Guide](CONTRIBUTING.md) to
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [v0.dev](https://v0.dev) for inspiration
-- [Vercel](https://vercel.com) for the AI SDK
-- [shadcn/ui](https://ui.shadcn.com) for UI components
-- [NextUI](https://nextui.org) for additional components
