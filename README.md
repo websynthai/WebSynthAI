@@ -16,12 +16,15 @@
 </div>
 
 <div align="center">
+  <a href="#-what-is-websynthai">What is WebSynthAI?</a> •
   <a href="#-features">Features</a> •
+  <a href="#-demo">Demo</a> •
   <a href="#-getting-started">Getting Started</a> •
+  <a href="#-environment-setup">Environment Setup</a> •
   <a href="#-tech-stack">Tech Stack</a> •
-  <a href="#-contributing">Contributing</a> •
-  <a href="#-license">License</a>
+  <a href="#-contributing">Contributing</a>
 </div>
+
 
 ## ✨ What is WebSynthAI?
 
@@ -55,6 +58,19 @@ WebSynthAI is an open-source tool that uses AI to build complete websites from a
 - Theme management
 - Version control
 - Collaborative development
+
+## 🎬 Demo  
+
+See how **WebSynthAI** can generate a fully functional website in less than a minute with just a single prompt!  
+
+### **Example Prompt:**  
+📝 *"Design a hype-driven site for a DeFi launch with the theme **Sonic Hedgefund**."*  
+
+### **Generated Website Preview:**  
+[![Generated Website](https://github.com/user-attachments/assets/e777945b-867c-4e84-abb8-48da7543cece)](https://www.websynthai.com/)
+
+🚀 **[Try it yourself](https://your-demo-link.com)** and bring your ideas to life instantly!
+
 
 ## 🛠 Getting Started
 
